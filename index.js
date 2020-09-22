@@ -66,7 +66,7 @@ module.exports = function(config) {
     });
 
     hubConnection.on('disconnect', function(a) {
-      _this.log('Disconnected', 'SNS');
+      _this.log('Disconnected');
       registered = false;
     });
 
