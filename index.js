@@ -1,13 +1,12 @@
 const socketClient = require('socket.io-client');
 const uid = require('uuid');
+const os = require('os');
 
 module.exports = function(config) {
 
   const _this = this;
 
-  _this.config = Object.assign({ hubUrl: 'http://localhost:8082', serverName: 'localhost' }, config);
-
-  _this.config.name = _this.config.name || _this.config.serverName;
+  _this.config = Object.assign({ hubUrl: 'http://localhost:8082', name: os.hostname() }, config);
 
   _this.uid = uid.v4();
 
