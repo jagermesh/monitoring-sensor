@@ -23,14 +23,13 @@ const config = {
   }
 };
 
-const hub = new MonitoringHub(config.hub);
+const hub       = new MonitoringHub(config.hub);
 const dashboard = new MonitoringDashboard(config.dashboard);
-const sensor = new MonitoringSensor(config.sensor);
+const sensor    = new MonitoringSensor(config.sensor);
 
 hub.start();
 dashboard.start();
 sensor.start();
-
 
 function sleep(delay) {
   return new Promise(function(resolve) {
@@ -42,7 +41,7 @@ function sleep(delay) {
   const op1max = 20000;
   const op2max = 120;
   const timeout = 100;
-  const progressLogger = new ProgressLogger();
+  const progressLogger = new ProgressLogger(config.sensor.hubUrl);
   const loggerSession1 = progressLogger.createSession('Testing progress (1)');
   const loggerSession2 = progressLogger.createSession('Testing progress (2)');
   const loggerOperation11 = loggerSession1.createOperation('Main task (1)');
