@@ -1,6 +1,7 @@
+const colors       = require('colors');
 const socketClient = require('socket.io-client');
-const uid = require('uuid');
-const os = require('os');
+const uid          = require('uuid');
+const os           = require('os');
 
 module.exports = function(config) {
 
@@ -10,12 +11,16 @@ module.exports = function(config) {
 
   _this.uid = uid.v4();
 
-  _this.log = function(message) {
-    console.log(`[SNS] ${message}`);
+  let logTag = 'SNS';
+
+  _this.log = function(message, tag) {
+    tag = tag || logTag;
+    console.log(colors.yellow(`[${tag}]`) + ' ' + message);
   };
 
-  _this.error = function(message) {
-    console.log(`[SNS] [ERROR] ${message}`);
+  _this.error = function(message, tag) {
+    tag = tag || logTag;
+    console.log(colors.yellow(`[${tag}]`) + ' ' + colors.red('[HUB]') + ' ' + message);
   };
 
   _this.start = function() {
@@ -27,13 +32,11 @@ module.exports = function(config) {
     let registered = false;
 
     let metricObjects = [];
-    let metricsList = [];
+    let metricsList   = [];
 
     for (let i = 0; i < _this.config.metrics.length; i++) {
       try {
         (function(metricConfig) {
-          _this.log(`Loading implementation for "${metricConfig.name}" metric with config:`);
-          _this.log('   ' + JSON.stringify(metricConfig), 'SNS');
           let metricImpl = require(`${__dirname}/metrics/Metric_${metricConfig.name}.js`);
           let metricObj = new metricImpl.create(_this.config, metricConfig);
           metricObj.init();
@@ -44,18 +47,20 @@ module.exports = function(config) {
                            , metricConfig: metricObj.getHarmlessConfig()
                            });
         })(_this.config.metrics[i]);
-        _this.log('   OK', 'SNS');
       } catch (error) {
-        _this.error('    Metric: ' + _this.config.metrics[i].name + ', Error: ' + error);
+        _this.error(`Metric: ${_this.config.metrics[i].name}, Error: ${error}`);
       }
     }
+
+    _this.log(`Connecting to hub at ${_this.config.hubUrl}`);
 
     const hubConnection = socketClient.connect(_this.config.hubUrl, { reconnect: true });
 
     hubConnection.on('connect', function() {
-      _this.log(`Registering sensor "${_this.config.name}" on hub server`);
-      hubConnection.emit( 'registerSensor', { sensorName:  _this.config.name
-                                            , sensorUid:   _this.uid
+      _this.log('Connected to hub');
+      _this.log(`Registering sensor "${_this.config.name}"`);
+      hubConnection.emit( 'registerSensor', { sensorUid:   _this.uid
+                                            , sensorName:  _this.config.name
                                             , metricsList: metricsList
                                             });
     });
@@ -66,7 +71,7 @@ module.exports = function(config) {
     });
 
     hubConnection.on('disconnect', function(a) {
-      _this.log('Disconnected');
+      _this.log('Disconnected from hub');
       registered = false;
     });
 
@@ -78,9 +83,8 @@ module.exports = function(config) {
               if (hubConnection && registered) {
                 if (hubConnection.connected) {
                   hubConnection.emit( 'sensorData'
-                                    , { metricInfo: { uid:  metricObj.getUid()
-                                                    // , name: metricObj.getName()
-                                                    }
+                                    , { sensorUid:  _this.uid
+                                      , metricUid:  metricObj.getUid()
                                       , metricData: data
                                       ,
                                       }
@@ -100,8 +104,6 @@ module.exports = function(config) {
         );
       })(metricObjects[i]);
     }
-
-    _this.log(`Connected to hub at ${_this.config.hubUrl}`);
 
   };
 

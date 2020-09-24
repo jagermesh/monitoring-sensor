@@ -16,7 +16,8 @@
   "dependencies": {
     "mysql": "^2.18.1",
     "socket.io-client": "*",
-    "uuid": "^3.4.0"
+    "uuid": "^3.4.0",
+    "colors": "*"
   },
   "deprecated": false,
   "description": "Monitoring Sensor",
