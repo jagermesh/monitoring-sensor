@@ -39,7 +39,11 @@ module.exports.create = function(sensorConfig, metricConfig) {
   };
 
   _this.getHarmlessConfig = function() {
-    return { website: _this.metricConfig.website };
+    const config = Object.create({ });
+    config.lineColor = 'green';
+    config.fillColor = 'lightgreen';
+    config.website = _this.metricConfig.website;
+    return config;
   };
 
   _this.getData = function(callback) {

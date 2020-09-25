@@ -28,10 +28,13 @@ module.exports.create = function(sensorConfig, metricConfig) {
 
   _this.getHarmlessConfig = function() {
     const config = Object.create({ });
+    config.lineColor = 'green';
+    config.fillColor = 'lightgreen';
     config.ranges = [];
     config.ranges.push({ value: _this.metricConfig.threshold
                        , title: `Critical (>${_this.metricConfig.threshold.toFixed(2)})`
-                       , color: 'rgb(180, 0, 180)'
+                       , lineColor: 'red'
+                       , fillColor: 'lightcoral'
                        });
     return config;
   };

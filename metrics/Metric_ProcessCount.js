@@ -27,7 +27,10 @@ module.exports.create = function(sensorConfig, metricConfig) {
   };
 
   _this.getHarmlessConfig = function() {
-    return { };
+    const config = Object.create({ });
+    config.lineColor = 'green';
+    config.fillColor = 'lightgreen';
+    return config;
   };
 
   _this.getData = function(callback) {

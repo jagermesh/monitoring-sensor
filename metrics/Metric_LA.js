@@ -6,7 +6,7 @@ module.exports.create = function(sensorConfig, metricConfig) {
   const _this = this;
 
   _this.sensorConfig = Object.assign({ }, sensorConfig);
-  _this.metricConfig = Object.assign({ refreshInterval: 3000, rendererName: 'LineChart' }, metricConfig);
+  _this.metricConfig = Object.assign({ refreshInterval: 3000, rendererName: 'FilledLineChart' }, metricConfig);
 
   _this.uid = uid.v4();
 
@@ -32,14 +32,18 @@ module.exports.create = function(sensorConfig, metricConfig) {
 
   _this.getHarmlessConfig = function() {
     const config = Object.create({ });
+    config.lineColor = 'green';
+    config.fillColor = 'lightgreen';
     config.ranges = [];
     config.ranges.push({ value: overload
                        , title: `Overload (>${critical.toFixed(2)})`
-                       , color: 'rgb(180, 0, 180)'
+                       , lineColor: 'chocolate'
+                       , fillColor: 'orange'
                        });
     config.ranges.push({ value: critical
                        , title: `Critical (>${overload.toFixed(2)})`
-                       , color: 'red'
+                       , lineColor: 'red'
+                       , fillColor: 'lightcoral'
                        });
     return config;
   };
