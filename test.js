@@ -7,7 +7,7 @@ const config = {
       { name: 'LA' }
     , { name: 'ProcessList' }
     , { name: 'ProcessCount' }
-    , { name: 'HDDFreeSpace', threshold: 1000 }
+    , { name: 'HDDFreeSpace', threshold: 1000, path: '/' }
     ]
   }
 };

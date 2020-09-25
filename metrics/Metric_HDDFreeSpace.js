@@ -31,8 +31,8 @@ module.exports.create = function(sensorConfig, metricConfig) {
     config.lineColor = 'green';
     config.fillColor = 'lightgreen';
     config.ranges = [];
-    config.ranges.push({ value: _this.metricConfig.threshold
-                       , title: `Critical (>${_this.metricConfig.threshold.toFixed(2)})`
+    config.ranges.push({ value:     _this.metricConfig.threshold
+                       , title:     `Critical (>${_this.metricConfig.threshold.toFixed(2)})`
                        , lineColor: 'red'
                        , fillColor: 'lightcoral'
                        });
@@ -42,7 +42,7 @@ module.exports.create = function(sensorConfig, metricConfig) {
   _this.getData = function(callback) {
     const path = _this.metricConfig.path;
     const regexp = /[ ]+([0-9]+)%[ ]+?/;
-    const cmd = 'df -h ' + path;
+    const cmd = `df -h ${path}`;
     childProcess.exec(cmd, function(err, resp) {
       const parsed = regexp.exec(resp);
       if (parsed) {

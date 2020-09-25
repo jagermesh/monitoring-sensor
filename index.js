@@ -30,6 +30,7 @@ module.exports = function(config) {
     _this.log('Starting sensor');
 
     let registered = false;
+    let started    = false;
 
     let metricObjects = [];
     let metricsList   = [];
@@ -68,6 +69,8 @@ module.exports = function(config) {
     hubConnection.on('sensorRegistered', function(data) {
       _this.log(`Registration acknowledged for sensor "${data.sensorInfo.sensorName}"`);
       registered = true;
+      start();
+      gatherAndSendAllData();
     });
 
     hubConnection.on('disconnect', function(a) {
@@ -75,34 +78,45 @@ module.exports = function(config) {
       registered = false;
     });
 
-    for (let i = 0; i < metricObjects.length; i++) {
-      (function(metricObj) {
-        function work() {
-          try {
-            metricObj.getData(function(data) {
-              if (hubConnection && registered) {
-                if (hubConnection.connected) {
-                  hubConnection.emit( 'sensorData'
-                                    , { sensorUid:  _this.uid
-                                      , metricUid:  metricObj.getUid()
-                                      , metricData: data
-                                      ,
-                                      }
-                                    );
-                }
-              }
-            });
-          } catch (error) {
-            _this.error('    Metric: ' + metricObj.getName() + ', Error: ' + error);
+    function sendData(data) {
+      if (hubConnection) {
+        if (hubConnection.connected) {
+          if (registered) {
+            hubConnection.emit( 'sensorData'
+                              , data
+                              );
           }
         }
-        work();
-        setInterval(
-          function() {
-            work();
-          }, metricObj.metricConfig.refreshInterval
-        );
-      })(metricObjects[i]);
+      }
+    }
+
+    function gatherAndSendData(metricObj) {
+      try {
+        metricObj.getData(function(data) {
+          sendData({ sensorUid:  _this.uid
+                   , metricUid:  metricObj.getUid()
+                   , metricData: data
+                   });
+        });
+      } catch (error) {
+        _this.error('    Metric: ' + metricObj.getName() + ', Error: ' + error);
+      }
+    }
+
+    function gatherAndSendAllData() {
+      metricObjects.map(function (metricObj) {
+        gatherAndSendData(metricObj);
+      });
+    }
+
+    function start() {
+      if (started) {
+        return;
+      }
+      started = true;
+      metricObjects.map(function (metricObj) {
+        setInterval(function() { gatherAndSendData(metricObj); }, metricObj.metricConfig.refreshInterval);
+      });
     }
 
   };
