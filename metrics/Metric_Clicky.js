@@ -1,5 +1,5 @@
 const http = require('http');
-const uid = require('uuid');
+const uid  = require('uuid');
 
 module.exports.create = function(sensorConfig, metricConfig) {
 

@@ -13,21 +13,27 @@ module.exports = function(config) {
 
   let logTag = 'SNS';
 
-  _this.log = function(message, tag) {
-    tag = tag || logTag;
-    console.log(colors.yellow(`[${tag}]`) + ' ' + message);
+  _this.log = function(message, attributes) {
+    let text = colors.yellow(`[${logTag}]`) + ' ' + message;
+    if (attributes) {
+      text += ' ' + colors.green(JSON.stringify(attributes));
+    }
+    console.log(text);
   };
 
-  _this.error = function(message, tag) {
-    tag = tag || logTag;
-    console.log(colors.yellow(`[${tag}]`) + ' ' + colors.red('[HUB]') + ' ' + message);
+  _this.error = function(message, attributes) {
+    let text = colors.yellow(`[${logTag}]`) + ' ' + colors.yellow(`[ERROR]`) + ' ' + message;
+    if (attributes) {
+      text += ' ' + colors.green(JSON.stringify(attributes));
+    }
+    console.log(text);
   };
 
   _this.start = function() {
 
     // client
 
-    _this.log('Starting sensor');
+    _this.log('Starting sensor', { sensorUid: _this.uid });
 
     let registered = false;
     let started    = false;
@@ -35,23 +41,23 @@ module.exports = function(config) {
     let metricObjects = [];
     let metricsList   = [];
 
-    for (let i = 0; i < _this.config.metrics.length; i++) {
+    _this.config.metrics.map(function(metricConfig) {
       try {
-        (function(metricConfig) {
-          let metricImpl = require(`${__dirname}/metrics/Metric_${metricConfig.name}.js`);
-          let metricObj = new metricImpl.create(_this.config, metricConfig);
-          metricObj.init();
-          metricObjects.push(metricObj);
-          metricsList.push({ uid:          metricObj.getUid()
-                           , name:         metricObj.getName()
-                           , rendererName: metricObj.getRendererName()
-                           , metricConfig: metricObj.getHarmlessConfig()
-                           });
-        })(_this.config.metrics[i]);
+        let metricImpl = require(`${__dirname}/metrics/Metric_${metricConfig.name}.js`);
+        let metricObj = new metricImpl.create(_this.config, metricConfig);
+        metricObj.init();
+        metricObjects.push(metricObj);
+        let metricInfo = { uid:          metricObj.getUid()
+                         , name:         metricObj.getName()
+                         , rendererName: metricObj.getRendererName()
+                         , metricConfig: metricObj.getHarmlessConfig()
+                         };
+        metricsList.push(metricInfo);
+        _this.log('Metric started', { sensorUid: _this.uid, metricUid: metricInfo.uid, name: metricInfo.name });
       } catch (error) {
-        _this.error(`Metric: ${_this.config.metrics[i].name}, Error: ${error}`);
+        _this.error(`Metric: ${metricConfig.name}, Error: ${error}`);
       }
-    }
+    });
 
     _this.log(`Connecting to hub at ${_this.config.hubUrl}`);
 
@@ -59,7 +65,7 @@ module.exports = function(config) {
 
     hubConnection.on('connect', function() {
       _this.log('Connected to hub');
-      _this.log(`Registering sensor "${_this.config.name}"`);
+      _this.log('Registering sensor', { sensorUid:   _this.uid });
       hubConnection.emit( 'registerSensor', { sensorUid:   _this.uid
                                             , sensorName:  _this.config.name
                                             , metricsList: metricsList
@@ -67,7 +73,7 @@ module.exports = function(config) {
     });
 
     hubConnection.on('sensorRegistered', function(data) {
-      _this.log(`Registration acknowledged for sensor "${data.sensorInfo.sensorName}"`);
+      _this.log('Sensor registration acknowledged', { sensorUid: _this.uid });
       registered = true;
       start();
       gatherAndSendAllData();
@@ -99,7 +105,7 @@ module.exports = function(config) {
                    });
         });
       } catch (error) {
-        _this.error('    Metric: ' + metricObj.getName() + ', Error: ' + error);
+        _this.error(`Metric: ${metricObj.getName()}, Error: ${error}`);
       }
     }
 
