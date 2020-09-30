@@ -7,8 +7,11 @@ module.exports.create = function(sensorConfig, metricConfig) {
 
   _this.sensorConfig = Object.assign({ }, sensorConfig);
   _this.metricConfig = Object.assign({ refreshInterval: 5000, rendererName: 'Table' }, metricConfig);
+  _this.metricConfig.settings = Object.assign({ }, _this.metricConfig.settings);
 
   _this.uid = uid.v4();
+
+  let fields = ['Id', 'User', 'Host', 'db', 'Command', 'Time', 'State', 'Progress', 'Info'];
 
   const mysqlConnection = mysql.createConnection({
       host:     _this.metricConfig.settings.host
@@ -33,23 +36,32 @@ module.exports.create = function(sensorConfig, metricConfig) {
   };
 
   _this.getHarmlessConfig = function() {
-    return { fields: { 'Time': 'Time', 'Info': 'Info' } };
+    return { };
   };
 
   _this.getData = function(callback) {
-    const title = `MySQL process(es) list (${_this.sensorConfig.name})`;
     mysqlConnection.query('SHOW FULL PROCESSLIST', function(err, rows) {
-      let list = [];
-      for(let i = 0; i < rows.length; i++) {
-        if (rows[i].Command != 'Sleep') {
-          if (rows[i].Info != 'SHOW FULL PROCESSLIST') {
-            list.push( { row: { Time: rows[i].Time, Info: rows[i].Info }});
+
+      const body = [];
+      const list = {};
+      if (_this.metricConfig.rendererName == 'Table') {
+        rows.map(function(mysqlProcess) {
+          if ((mysqlProcess.Command != 'Sleep') && (mysqlProcess.Info != 'SHOW FULL PROCESSLIST')) {
+            let row = [];
+            fields.map(function(fieldName) {
+              row.push(mysqlProcess[fieldName]);
+            });
+            body.push(row);
           }
-        }
+        });
+        list.header = fields;
+        list.body   = body;
       }
-      const subTitle = `${list.length} process(es) running`;
-      callback.call(_this, { list: list
-                           , title: title
+
+      const title = `MySQL process(es) list (${_this.sensorConfig.name})`;
+      const subTitle = `${list.body.length} process(es) running`;
+      callback.call(_this, { list:     list
+                           , title:    title
                            , subTitle: subTitle
                            });
     });

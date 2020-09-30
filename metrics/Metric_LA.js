@@ -1,12 +1,13 @@
 const uid = require('uuid');
-const os = require('os');
+const os  = require('os');
 
 module.exports.create = function(sensorConfig, metricConfig) {
 
   const _this = this;
 
   _this.sensorConfig = Object.assign({ }, sensorConfig);
-  _this.metricConfig = Object.assign({ refreshInterval: 3000, rendererName: 'FilledLineChart' }, metricConfig);
+  _this.metricConfig = Object.assign({ refreshInterval: 3000, rendererName: 'Chart' }, metricConfig);
+  _this.metricConfig.settings = Object.assign({ }, _this.metricConfig.settings);
 
   _this.uid = uid.v4();
 
@@ -33,17 +34,16 @@ module.exports.create = function(sensorConfig, metricConfig) {
   _this.getHarmlessConfig = function() {
     const config = Object.create({ });
     config.lineColor = 'green';
-    config.fillColor = 'lightgreen';
+    config.datasets = [];
+    config.datasets.push(_this.getName());
     config.ranges = [];
     config.ranges.push({ value: overload
                        , title: `Overload (>${critical.toFixed(2)})`
                        , lineColor: 'chocolate'
-                       , fillColor: 'orange'
                        });
     config.ranges.push({ value: critical
                        , title: `Critical (>${overload.toFixed(2)})`
                        , lineColor: 'red'
-                       , fillColor: 'lightcoral'
                        });
     return config;
   };
@@ -63,10 +63,10 @@ module.exports.create = function(sensorConfig, metricConfig) {
   _this.getData = function(callback) {
     const la       = os.loadavg();
     const title    = `LA ${cpus} CPUs (${_this.sensorConfig.name})`;
-    const value    = la[0];
     const subTitle = writeValue(la[0], critical, overload) + ' · ' + writeValue(la[1], critical, overload) + ' · ' + writeValue(la[2], critical, overload);
-    callback.call(_this, { value: value
-                         , title: title
+    const value    = la[0];
+    callback.call(_this, { values:   [value]
+                         , title:    title
                          , subTitle: subTitle
                          });
   };

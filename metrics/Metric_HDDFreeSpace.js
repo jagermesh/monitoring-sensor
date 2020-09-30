@@ -6,7 +6,8 @@ module.exports.create = function(sensorConfig, metricConfig) {
   const _this = this;
 
   _this.sensorConfig = Object.assign({ }, sensorConfig);
-  _this.metricConfig = Object.assign({ refreshInterval: 30000, rendererName: 'LineChart' }, metricConfig);
+  _this.metricConfig = Object.assign({ refreshInterval: 30000, rendererName: 'Chart' }, metricConfig);
+  _this.metricConfig.settings = Object.assign({ }, _this.metricConfig.settings);
 
   _this.uid = uid.v4();
 
@@ -29,18 +30,20 @@ module.exports.create = function(sensorConfig, metricConfig) {
   _this.getHarmlessConfig = function() {
     const config = Object.create({ });
     config.lineColor = 'green';
-    config.fillColor = 'lightgreen';
-    config.ranges = [];
-    config.ranges.push({ value:     _this.metricConfig.threshold
-                       , title:     `Critical (>${_this.metricConfig.threshold.toFixed(2)})`
-                       , lineColor: 'red'
-                       , fillColor: 'lightcoral'
-                       });
+    config.datasets = [];
+    config.datasets.push(_this.getName());
+    if (_this.metricConfig.settings.threshold) {
+      config.ranges = [];
+      config.ranges.push({ value:     _this.metricConfig.settings.threshold
+                         , title:     `Critical (>${_this.metricConfig.settings.threshold.toFixed(2)})`
+                         , lineColor: 'red'
+                         });
+    }
     return config;
   };
 
   _this.getData = function(callback) {
-    const path = _this.metricConfig.path;
+    const path = _this.metricConfig.settings.path;
     const regexp = /[ ]+([0-9]+)%[ ]+?/;
     const cmd = `df -h ${path}`;
     childProcess.exec(cmd, function(err, resp) {
@@ -49,8 +52,8 @@ module.exports.create = function(sensorConfig, metricConfig) {
         const value = parsed[1];
         const title = `HDD Free Space at ${path} (${_this.sensorConfig.name})`;
         const subTitle = `${value}% used`;
-        callback.call(_this, { value: value
-                             , title: title
+        callback.call(_this, { values:   [value]
+                             , title:    title
                              , subTitle: subTitle
                              });
       }
