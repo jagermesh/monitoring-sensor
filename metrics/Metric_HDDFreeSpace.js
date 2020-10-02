@@ -30,6 +30,8 @@ module.exports.create = function(sensorConfig, metricConfig) {
   _this.getHarmlessConfig = function() {
     const config = Object.create({ });
     config.lineColor = 'green';
+    config.max = 100;
+    config.min = 0;
     config.datasets = [];
     config.datasets.push(_this.getName());
     if (_this.metricConfig.settings.threshold) {

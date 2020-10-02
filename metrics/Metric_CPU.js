@@ -33,6 +33,8 @@ module.exports.create = function(sensorConfig, metricConfig) {
   _this.getHarmlessConfig = function() {
     const config = Object.create({ });
     config.lineColor = 'green';
+    config.suggestedMax = 100;
+    config.min = 0;
     config.datasets = [];
     if (_this.metricConfig.settings.processes) {
       config.datasets.push('Overall');

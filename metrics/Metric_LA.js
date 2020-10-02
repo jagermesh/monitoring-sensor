@@ -34,6 +34,8 @@ module.exports.create = function(sensorConfig, metricConfig) {
   _this.getHarmlessConfig = function() {
     const config = Object.create({ });
     config.lineColor = 'green';
+    config.suggestedMax = overload;
+    config.min = 0;
     config.datasets = [];
     config.datasets.push(_this.getName());
     config.ranges = [];
