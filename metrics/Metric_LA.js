@@ -39,12 +39,12 @@ module.exports.create = function(sensorConfig, metricConfig) {
     config.datasets = [];
     config.datasets.push(_this.getName());
     config.ranges = [];
-    config.ranges.push({ value: overload
-                       , title: `Overload (>${critical.toFixed(2)})`
+    config.ranges.push({ value: critical
+                       , title: `Critical (>${critical.toFixed(2)})`
                        , lineColor: 'chocolate'
                        });
-    config.ranges.push({ value: critical
-                       , title: `Critical (>${overload.toFixed(2)})`
+    config.ranges.push({ value: overload
+                       , title: `Overload (>${overload.toFixed(2)})`
                        , lineColor: 'red'
                        });
     return config;
