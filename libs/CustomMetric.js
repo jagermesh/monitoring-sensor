@@ -17,25 +17,25 @@ class CustomMetric {
 
   getInfo() {
     const _this = this;
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       resolve({
-          metricUid: _this.metricUid
-        , metricName: _this.metricName
-        , metricTags: _this.metricTags
-        , metricRenderer: _this.rendererName
-        , metricRefreshInterval: _this.refreshInterval
+        metricUid: _this.metricUid,
+        metricName: _this.metricName,
+        metricTags: _this.metricTags,
+        metricRenderer: _this.rendererName,
+        metricRefreshInterval: _this.refreshInterval,
       });
     });
   }
 
   getConfig() {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       resolve({});
     });
   }
 
   getData() {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       resolve({});
     });
   }

@@ -36,17 +36,17 @@ class RAMMetric extends CustomMetric {
         config.datasets.push('Active');
         config.ranges = [];
         config.ranges.push({
-            value:     overload
-          , title:     `Overload (>${bytes(overload)})`
-          , lineColor: 'chocolate'
+          value:     overload,
+          title:     `Overload (>${bytes(overload)})`,
+          lineColor: 'chocolate',
         });
         config.ranges.push({
-            value:     critical
-          , title:     `Critical (>${bytes(critical)})`
-          , lineColor: 'red'
+          value:     critical,
+          title:     `Critical (>${bytes(critical)})`,
+          lineColor: 'red',
         });
         resolve(config);
-      });
+      }, reject);
     });
   }
 
@@ -58,15 +58,12 @@ class RAMMetric extends CustomMetric {
         const rawTotal     = stats.total;
         const rawActive    = stats.active;
         const rawAvailable = stats.available;
-        const total        = rawTotal/_this.multiplier;
         const active       = rawActive/_this.multiplier;
-        const available    = rawAvailable/_this.multiplier;
         const title        = `RAM`;
         const subTitle     = `Active ${bytes(rawActive)}, Total ${bytes(rawTotal)}, Available ${bytes(rawAvailable)}`;
-        const value        = active.toFixed(2);
         const table = {
-            header: []
-          , body:   []
+          header: [],
+          body:   [],
         };
         table.body.push(['Active', bytes(rawActive)]);
         table.body.push(['Total', bytes(rawTotal)]);
@@ -84,7 +81,7 @@ class RAMMetric extends CustomMetric {
           points:    points,
           table:     table,
         });
-      });
+      }, reject);
     });
   }
 

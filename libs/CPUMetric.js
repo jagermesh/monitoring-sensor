@@ -21,14 +21,14 @@ class CPUMetric extends CustomMetric {
   getConfig() {
     const _this = this;
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       const overload = 75;
       const critical = 90;
       const config = Object.create({ });
       config.lineColor = 'green';
       config.suggestedMax = 100;
       config.min = 0;
-      config.filter = _this.metricSettings.processes;
+      config.settings = _this.metricSettings.processes;
       config.datasets = [];
       config.datasets.push('Overall');
       if (_this.metricSettings.processesList.length > 0) {
@@ -41,14 +41,14 @@ class CPUMetric extends CustomMetric {
       }
       config.ranges = [];
       config.ranges.push({
-          value: overload
-        , title: `Overload (>${overload.toFixed(2)})`
-        , lineColor: 'chocolate'
+        value: overload,
+        title: `Overload (>${overload.toFixed(2)})`,
+        lineColor: 'chocolate',
       });
       config.ranges.push({
-          value: critical
-        , title: `Critical (>${overload.toFixed(2)})`
-        , lineColor: 'red'
+        value: critical,
+        title: `Critical (>${critical.toFixed(2)})`,
+        lineColor: 'red',
       });
       resolve(config);
     });
@@ -95,7 +95,7 @@ class CPUMetric extends CustomMetric {
               points:   points,
               table:    table,
             });
-          });
+          }, reject);
         } else {
           table.body.push(['Overall', `${currentLoad.toFixed(2)}%`]);
           table.body.push(['User',    `${currentLoadUser.toFixed(2)}%`]);
@@ -112,7 +112,7 @@ class CPUMetric extends CustomMetric {
             table:    table,
           });
         }
-      });
+      }, reject);
     });
   }
 

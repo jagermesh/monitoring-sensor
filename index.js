@@ -9,13 +9,13 @@ const MySQLProcessesMetric = require(__dirname + '/libs/MySQLProcessesMetric.js'
 const ProcessesMetric = require(__dirname + '/libs/ProcessesMetric.js');
 
 module.exports = {
-    MonitoringSensor: MonitoringSensor
-  , SensorHubConnector: SensorHubConnector
+  MonitoringSensor: MonitoringSensor,
+  SensorHubConnector: SensorHubConnector,
   // metrics
-  , CPUMetric: CPUMetric
-  , HDDMetric: HDDMetric
-  , LAMetric: LAMetric
-  , RAMMetric: RAMMetric
-  , MySQLProcessesMetric: MySQLProcessesMetric
-  , ProcessesMetric: ProcessesMetric
+  CPUMetric: CPUMetric,
+  HDDMetric: HDDMetric,
+  LAMetric: LAMetric,
+  RAMMetric: RAMMetric,
+  MySQLProcessesMetric: MySQLProcessesMetric,
+  ProcessesMetric: ProcessesMetric,
 };

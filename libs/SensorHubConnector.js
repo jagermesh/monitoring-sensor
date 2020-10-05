@@ -20,7 +20,7 @@ class SensorHubConnector extends EventEmitter {
       _this.emit('metricRegistered', data);
     });
 
-    _this.connection.on('disconnect', function(a) {
+    _this.connection.on('disconnect', function() {
       _this.emit('disconnect');
     });
   }
@@ -31,8 +31,8 @@ class SensorHubConnector extends EventEmitter {
     if (_this.connection) {
       if (_this.connection.connected) {
         let message = {
-            metricUid:  metricUid
-          , metricData: metricData
+          metricUid:  metricUid,
+          metricData: metricData,
         };
         _this.connection.emit('metricData', message);
       }

@@ -22,10 +22,10 @@ class ProcessesMetric extends CustomMetric {
   getConfig() {
     const _this = this;
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       const config = Object.create({ });
       config.lineColor = 'green';
-      config.filter = _this.metricSettings.processes;
+      config.settings = _this.metricSettings.processes;
       config.datasets = [];
       config.datasets.push('Total');
       _this.metricSettings.processesList.map(function(processName) {
@@ -66,8 +66,8 @@ class ProcessesMetric extends CustomMetric {
           points.push(processStat[processName]);
         }
         const table = {
-            header: _this.fields
-          , body:    []
+          header: _this.fields,
+          body:    [],
         };
         foundProcesses.map(function(processInfo) {
           let row = [];
@@ -85,7 +85,7 @@ class ProcessesMetric extends CustomMetric {
           points:   points,
           table:    table,
         });
-      });
+      }, reject);
     });
   }
 

@@ -18,7 +18,7 @@ class LAMetric extends CustomMetric {
   getConfig() {
     const _this = this;
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       const config = Object.create({ });
       config.lineColor = 'green';
       config.suggestedMax = _this.overload;
@@ -27,14 +27,14 @@ class LAMetric extends CustomMetric {
       config.datasets.push(_this.metricName);
       config.ranges = [];
       config.ranges.push({
-          value: _this.critical
-        , title: `Critical (>${_this.critical.toFixed(2)})`
-        , lineColor: 'chocolate'
+        value: _this.critical,
+        title: `Critical (>${_this.critical.toFixed(2)})`,
+        lineColor: 'chocolate',
       });
       config.ranges.push({
-          value: _this.overload
-        , title: `Overload (>${_this.overload.toFixed(2)})`
-        , lineColor: 'red'
+        value: _this.overload,
+        title: `Overload (>${_this.overload.toFixed(2)})`,
+        lineColor: 'red',
       });
       resolve(config);
     });
@@ -55,13 +55,13 @@ class LAMetric extends CustomMetric {
   getData() {
     const _this = this;
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       const la       = os.loadavg();
       const title    = `LA ${_this.cpus} CPUs`;
       const subTitle = `${_this.writeValue(la[0])} · ${_this.writeValue(la[1])} · ${_this.writeValue(la[2])}`;
       const table = {
-          header: []
-        , body:   []
+        header: [],
+        body:   [],
       };
       table.body.push(['LA 1 Min',  la[0].toFixed(2)]);
       table.body.push(['LA 5 Min',  la[1].toFixed(2)]);

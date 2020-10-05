@@ -1,4 +1,3 @@
-const colors = require('colors');
 const uuid   = require('uuid');
 const os     = require('os');
 
@@ -12,17 +11,17 @@ class MonitoringSensor {
 
     _this.sensorConfig = Object.assign({ hubUrl: 'http://localhost:8082', name: os.hostname() }, config);
 
-    _this.sensorUid   = uuid.v4();
-    _this.sensorName  = _this.sensorConfig.name;
-    _this.metrics     = [];
+    _this.sensorUid  = uuid.v4();
+    _this.sensorName = _this.sensorConfig.name;
+    _this.metrics    = [];
 
     _this.logger = (logger || new Logger('SNS'));
   }
 
   getInfo() {
     return {
-        sensorUid: this.sensorUid
-      , sensorName: this.sensorName
+      sensorUid: this.sensorUid,
+      sensorName: this.sensorName,
     };
   }
 
@@ -49,15 +48,14 @@ class MonitoringSensor {
     _this.sensorConfig.metrics.map(async function(metricConfig) {
       let Metric = require(`${__dirname}/${metricConfig.name}Metric.js`);
       let metric = new Metric(_this.sensorConfig, metricConfig);
-      let metrinConfig = await metric.getConfig();
       let metricDescriptor = {
-          sensorInfo: _this.getInfo()
-        , metricInfo: await metric.getInfo()
-        , metricConfig: await metric.getConfig()
+        sensorInfo: _this.getInfo(),
+        metricInfo: await metric.getInfo(),
+        metricConfig: await metric.getConfig(),
       };
       _this.metrics.push({
-          metric: metric
-        , metricDescriptor: metricDescriptor
+        metric: metric,
+        metricDescriptor: metricDescriptor,
       });
       _this.logger.log('Metric started', metricDescriptor);
       registerMetric(metricDescriptor);
@@ -79,7 +77,7 @@ class MonitoringSensor {
 
     sensorHubConnector.on('metricRegistered', function(data) {
       _this.metrics.map(function(metric) {
-        if (metric.metricDescriptor.metricInfo.metricUid == data.metricInfo.metricUid) {
+        if (metric.metricDescriptor.metricInfo.metricUid === data.metricInfo.metricUid) {
           _this.logger.log('Metric registration acknowledged', metric.metricDescriptor);
           gatherAndSendData(metric.metric, metric.metricDescriptor);
         }

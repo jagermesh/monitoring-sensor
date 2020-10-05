@@ -1,6 +1,5 @@
 const bytes = require('bytes');
 const si    = require('systeminformation');
-const childProcess = require('child_process');
 
 const CustomMetric = require(__dirname + '/CustomMetric.js');
 
@@ -37,7 +36,7 @@ class HDDMetric extends CustomMetric {
           config.lineColor = 'green';
           config.max = 100;
           config.min = 0;
-          config.filter = _this.metricSettings.mounts;
+          config.settings = _this.metricSettings.mounts;
           config.datasets = [];
           let devices = data.filter(function(device) {
             return ((_this.realMounts.indexOf(device.mount) !== -1) && ((_this.metricSettings.mountsList.length === 0) || (_this.metricSettings.mountsList.indexOf(device.mount) !== -1)));
@@ -48,14 +47,14 @@ class HDDMetric extends CustomMetric {
           if (_this.metricSettings.threshold) {
             config.ranges = [];
             config.ranges.push({
-                value:     _this.metricSettings.threshold
-              , title:     `Critical (>${_this.metricSettings.threshold.toFixed(2)})`
-              , lineColor: 'red'
+              value:     _this.metricSettings.threshold,
+              title:     `Critical (>${_this.metricSettings.threshold.toFixed(2)})`,
+              lineColor: 'red',
             });
           }
           resolve(config);
-        });
-      });
+        }, reject);
+      }, reject);
     });
   }
 
@@ -76,8 +75,8 @@ class HDDMetric extends CustomMetric {
         const usagePercent = totalUsed*100/totalSize;
         const points = [];
         const table = {
-            header: ['mount', 'size', 'used', 'use', 'type', 'fs']
-          , body:   []
+          header: ['mount', 'size', 'used', 'use', 'type', 'fs'],
+          body:   [],
         };
         devices.map(function(device) {
           points.push(device.use);
@@ -96,7 +95,7 @@ class HDDMetric extends CustomMetric {
           points:   points,
           table:    table,
         });
-      });
+      }, reject);
     });
   }
 

@@ -11,16 +11,14 @@ class MySQLProcessesMetric extends CustomMetric {
     this.refreshInterval = this.refreshInterval || 5000;
     this.fields          = ['Id', 'User', 'Host', 'db', 'Command', 'Time', 'State', 'Progress', 'Info'];
     this.mysqlConnection = mysql.createConnection({
-        host:     this.metricConfig.settings.host
-      , user:     this.metricConfig.settings.user
-      , password: this.metricConfig.settings.password
+      host:     this.metricConfig.settings.host,
+      user:     this.metricConfig.settings.user,
+      password: this.metricConfig.settings.password,
     });
   }
 
   getConfig() {
-    const _this = this;
-
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       const config = Object.create({ });
       config.lineColor = 'green';
       config.datasets = [];
@@ -34,12 +32,16 @@ class MySQLProcessesMetric extends CustomMetric {
 
     return new Promise(function(resolve, reject) {
       _this.mysqlConnection.query('SHOW FULL PROCESSLIST', function (err, rows) {
+        if (err) {
+          reject(err.sqlMessage);
+          return;
+        }
         const table = {
-            header: _this.fields
-          , body:    []
+          header: _this.fields,
+          body:    [],
         };
         const mySqlProcesses = rows.filter(function (mySqlProcess) {
-          return ((mySqlProcess.Command != 'Sleep') && (mySqlProcess.Info != 'SHOW FULL PROCESSLIST'));
+          return ((mySqlProcess.Command !== 'Sleep') && (mySqlProcess.Info !== 'SHOW FULL PROCESSLIST'));
         });
         mySqlProcesses.map(function(mySqlProcess) {
           let row = [];
@@ -50,7 +52,6 @@ class MySQLProcessesMetric extends CustomMetric {
         });
         const title    = `MySQL process(es)`;
         const subTitle = `${mySqlProcesses.length} process(es) running at ${_this.metricConfig.settings.host}`;
-        const value    = mySqlProcesses.length;
         const points   = [];
         points.push(mySqlProcesses.length);
         const values = [];
