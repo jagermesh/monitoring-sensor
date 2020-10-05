@@ -3,10 +3,11 @@ const uuid   = require('uuid');
 const os     = require('os');
 
 const SensorHubConnector = require(__dirname + '/SensorHubConnector.js');
+const Logger = require(__dirname + '/Logger.js');
 
 class MonitoringSensor {
 
-  constructor(config) {
+  constructor(config, logger) {
     const _this = this;
 
     _this.sensorConfig = Object.assign({ hubUrl: 'http://localhost:8082', name: os.hostname() }, config);
@@ -14,20 +15,8 @@ class MonitoringSensor {
     _this.sensorUid   = uuid.v4();
     _this.sensorName  = _this.sensorConfig.name;
     _this.metrics     = [];
-    _this.metricsList = [];
-  }
 
-  log(message, attributes, isError) {
-    const logTag = 'SNS';
-    let text = colors.yellow(`[${logTag}]`);
-    if (isError) {
-      text += ' ' + colors.yellow(`[ERROR]`);
-    }
-    text += ' ' + message;
-    if (attributes) {
-      text += ' ' + colors.green(JSON.stringify(attributes));
-    }
-    console.log(text);
+    _this.logger = (logger || new Logger('SNS'));
   }
 
   getInfo() {
@@ -40,7 +29,7 @@ class MonitoringSensor {
   start() {
     const _this = this;
 
-    _this.log('Starting sensor', { sensorUid: _this.sensorUid });
+    _this.logger.log('Starting sensor', { sensorUid: _this.sensorUid });
 
     function gatherAndSendData(metric, metricDescriptor) {
       try {
@@ -48,12 +37,12 @@ class MonitoringSensor {
           sensorHubConnector.sendData(metricDescriptor.metricInfo.metricUid, metricData);
         });
       } catch (error) {
-        _this.log(error, metricDescriptor.metrictInfo, true);
+        _this.logger.log(error, metricDescriptor.metrictInfo, true);
       }
     }
 
     function registerMetric(metricDescriptor) {
-      _this.log('Registering metric', metricDescriptor);
+      _this.logger.log('Registering metric', metricDescriptor);
       sensorHubConnector.registerMetric(metricDescriptor);
     }
 
@@ -70,19 +59,19 @@ class MonitoringSensor {
           metric: metric
         , metricDescriptor: metricDescriptor
       });
-      _this.log('Metric started', metricDescriptor);
+      _this.logger.log('Metric started', metricDescriptor);
       registerMetric(metricDescriptor);
       setInterval(function() {
         gatherAndSendData(metric, metricDescriptor);
       }, metric.refreshInterval);
     });
 
-    _this.log(`Connecting to hub at ${_this.sensorConfig.hubUrl}`);
+    _this.logger.log(`Connecting to hub at ${_this.sensorConfig.hubUrl}`);
 
     const sensorHubConnector = new SensorHubConnector(_this.sensorConfig.hubUrl);
 
     sensorHubConnector.on('connect', function() {
-      _this.log(`Connected to hub at ${_this.sensorConfig.hubUrl}`);
+      _this.logger.log(`Connected to hub at ${_this.sensorConfig.hubUrl}`);
       _this.metrics.map(function(metric) {
         registerMetric(metric.metricDescriptor);
       });
@@ -91,14 +80,14 @@ class MonitoringSensor {
     sensorHubConnector.on('metricRegistered', function(data) {
       _this.metrics.map(function(metric) {
         if (metric.metricDescriptor.metricInfo.metricUid == data.metricInfo.metricUid) {
-          _this.log('Metric registration acknowledged', metric.metricDescriptor);
+          _this.logger.log('Metric registration acknowledged', metric.metricDescriptor);
           gatherAndSendData(metric.metric, metric.metricDescriptor);
         }
       });
     });
 
     sensorHubConnector.on('disconnect', function() {
-      _this.log(`Disconnected from hub at ${_this.sensorConfig.hubUrl}`);
+      _this.logger.log(`Disconnected from hub at ${_this.sensorConfig.hubUrl}`);
     });
   }
 
