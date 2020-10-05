@@ -49,7 +49,7 @@ class MySQLProcessesMetric extends CustomMetric {
           table.body.push(row);
         });
         const title    = `MySQL process(es)`;
-        const subTitle = `${mySqlProcesses.length} process(es) running`;
+        const subTitle = `${mySqlProcesses.length} process(es) running at ${this.metricConfig.settings.host}`;
         const value    = mySqlProcesses.length;
         const points   = [];
         points.push(mySqlProcesses.length);
