@@ -36,7 +36,7 @@ class MonitoringSensor {
           sensorHubConnector.sendData(metricDescriptor.metricInfo.metricUid, metricData);
         });
       } catch (error) {
-        _this.logger.log(error, metricDescriptor.metrictInfo, true);
+        _this.logger.log(error, metricDescriptor.metricInfo, true);
       }
     }
 
