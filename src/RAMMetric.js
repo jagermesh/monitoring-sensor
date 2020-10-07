@@ -60,19 +60,19 @@ class RAMMetric extends CustomMetric {
         const rawAvailable = stats.available;
         const active       = rawActive/_this.multiplier;
         const title        = `RAM`;
-        const subTitle     = `Active ${bytes(rawActive)}, Total ${bytes(rawTotal)}, Available ${bytes(rawAvailable)}`;
+        const subTitle     = `Available ${bytes(rawAvailable)}, Active ${bytes(rawActive)}, Total ${bytes(rawTotal)}`;
         const table = {
           header: [],
           body:   [],
         };
+        table.body.push(['Available', bytes(rawAvailable)]);
         table.body.push(['Active', bytes(rawActive)]);
         table.body.push(['Total', bytes(rawTotal)]);
-        table.body.push(['Available', bytes(rawAvailable)]);
         const points = [];
         points.push(active);
         const values = [];
-        values.push({ raw: rawActive, threshold: active, formatted: bytes(rawActive), label: 'Active'});
         values.push({ raw: rawAvailable, formatted: bytes(rawAvailable), label: 'Available'});
+        values.push({ raw: rawActive, threshold: active, formatted: bytes(rawActive), label: 'Active'});
         values.push({ raw: rawTotal, formatted: bytes(rawTotal), label: 'Total'});
         resolve({
           title:     title,
