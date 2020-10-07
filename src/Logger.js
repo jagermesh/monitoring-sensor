@@ -9,7 +9,7 @@ class Logger {
   log(message, attributes, isError) {
     let text = colors.yellow(`[${this.tag}]`);
     if (isError) {
-      text += ' ' + colors.yellow(`[ERROR]`);
+      text += ' ' + colors.red(`[ERROR]`);
     }
     text += ' ' + message;
     if (attributes) {

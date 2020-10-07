@@ -39,6 +39,19 @@ class JenkinsMetric extends CustomMetric {
     return result;
   }
 
+  formatStatusName(name) {
+    switch(name) {
+      case 'SUCCESS':
+        return `<span style="color:green;">Success</span>`;
+      case 'FAILURE':
+        return `<span style="color:red;">Failed</span>`;
+      case 'ABORTED':
+        return `<span style="color:orange;">Cancelled</span>`;
+      default:
+        return `<span style="color:white;">${name}</span>`;
+    }
+  }
+
   getData() {
     const _this = this;
 
@@ -74,7 +87,9 @@ class JenkinsMetric extends CustomMetric {
             });
           }, Promise.resolve());
 
-          // console.log(allBuilds);
+          allBuilds.sort(function compare(a, b) {
+            return (a.number > b.number ? -1 : (a.number < b.number ? 1 : 0));
+          });
 
           let activeBuilds  = allBuilds.filter(function(build) { return response.data.building; });
           let successBuilds = allBuilds.filter(function(build) { return (!response.data.building && (build.result === 'SUCCESS')); });
@@ -91,22 +106,23 @@ class JenkinsMetric extends CustomMetric {
           const table = { header: [], body: [] };
           table.header = [
             'Number',
+            'Status',
             'Name',
             'Started',
             'Duration',
             'Est Duration',
-            'Result',
             'Console output',
             'Status page',
           ];
           allBuilds.map(function(build) {
+            let duration = build.duration/1000/60;
             table.body.push([
               build.number,
+              _this.formatStatusName(build.status),
               build.displayName,
               _this.formatDate(build.timestamp),
-              _this.formatDate(build.duration),
-              _this.formatDate(build.timestamp + build.estimatedDuration),
-              build.status,
+              `${duration.toFixed()} Min`,
+              (build.building ? _this.formatDate(build.timestamp + build.estimatedDuration) : ''),
               `<a href="${_this.apiUrl}${build.id}/console" target="_blank">Console output</a>`,
               `<a href="${_this.apiUrl}${build.id}" target="_blank">Status page</a>`,
             ]);
@@ -120,7 +136,7 @@ class JenkinsMetric extends CustomMetric {
             table:    table,
           });
         }
-      });
+      }, reject);
     });
   }
 

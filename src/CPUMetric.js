@@ -1,3 +1,4 @@
+const os = require('os');
 const si = require('systeminformation');
 
 const CustomMetric = require(__dirname + '/CustomMetric.js');
@@ -16,6 +17,7 @@ class CPUMetric extends CustomMetric {
         return processName.trim();
       });
     }
+    this.cpus = os.cpus().length;
   }
 
   getConfig() {
@@ -63,7 +65,7 @@ class CPUMetric extends CustomMetric {
         const currentLoadUser   = stats.currentload_user;
         const currentLoadSystem = stats.currentload_system;
         const currentLoadIdle   = stats.currentload_idle;
-        const title             = 'CPU';
+        const title             = `CPU Load ${_this.cpus} CPUs`;
         const subTitle          = `Overall ${currentLoad.toFixed(2)}%,  User ${currentLoadUser.toFixed(2)}%, System ${currentLoadSystem.toFixed(2)}%, Idle ${currentLoadIdle.toFixed(2)}%`;
         const points            = [];
         points.push(currentLoad);

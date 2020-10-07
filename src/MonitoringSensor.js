@@ -34,6 +34,8 @@ class MonitoringSensor {
       try {
         metric.getData().then(function(metricData) {
           sensorHubConnector.sendData(metricDescriptor.metricInfo.metricUid, metricData);
+        }).catch(function(error) {
+          _this.logger.log(error, metricDescriptor.metricInfo, true);
         });
       } catch (error) {
         _this.logger.log(error, metricDescriptor.metricInfo, true);
