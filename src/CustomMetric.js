@@ -9,7 +9,7 @@ class CustomMetric {
 
     this.metricUid       = uuid.v4();
     this.metricName      = metricConfig.name;
-    this.metricTags      = (metricConfig.tags || '').split(',');
+    this.metricTags      = metricConfig.tags || '';
     this.sensorName      = sensorConfig.name || os.hostname();
     this.rendererName    = metricConfig.rendererName;
     this.refreshInterval = metricConfig.refreshInterval;
