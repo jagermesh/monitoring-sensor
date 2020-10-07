@@ -74,15 +74,14 @@ class JenkinsMetric extends CustomMetric {
             return promise.then(function() {
               return axios.get(`${build.url}api/json`).then(function(response) {
                 let build = response.data;
+                build.building = (build.building || !build.result);
                 if (build.building) {
                   build.status = 'RUNNING';
                 } else {
-                  build.status = response.data.result;
-                }
-                allBuilds.push(build);
-                if (!build.building) {
+                  build.status = build.result;
                   _this.cache.set(build.number, build);
                 }
+                allBuilds.push(build);
               });
             });
           }, Promise.resolve());
@@ -91,9 +90,9 @@ class JenkinsMetric extends CustomMetric {
             return (a.number > b.number ? -1 : (a.number < b.number ? 1 : 0));
           });
 
-          let activeBuilds  = allBuilds.filter(function(build) { return response.data.building; });
-          let successBuilds = allBuilds.filter(function(build) { return (!response.data.building && (build.result === 'SUCCESS')); });
-          let failedBuilds  = allBuilds.filter(function(build) { return (!response.data.building && (build.result === 'FAILURE')); });
+          let activeBuilds  = allBuilds.filter(function(build) { return build.building; });
+          let successBuilds = allBuilds.filter(function(build) { return (!build.building && (build.result === 'SUCCESS')); });
+          let failedBuilds  = allBuilds.filter(function(build) { return (!build.building && (build.result !== 'SUCCESS')); });
 
           const title = 'Jenkins Builds';
           const subTitle = `Total ${allBuilds.length}, Active ${activeBuilds.length}, Success ${successBuilds.length}, Failed ${failedBuilds.length}`;
@@ -109,8 +108,8 @@ class JenkinsMetric extends CustomMetric {
             'Status',
             'Name',
             'Started',
+            'Est Finish',
             'Duration',
-            'Est Duration',
             'Console output',
             'Status page',
           ];
@@ -121,8 +120,8 @@ class JenkinsMetric extends CustomMetric {
               _this.formatStatusName(build.status),
               build.displayName,
               _this.formatDate(build.timestamp),
-              `${duration.toFixed()} Min`,
               (build.building ? _this.formatDate(build.timestamp + build.estimatedDuration) : ''),
+              `${duration.toFixed()} Min`,
               `<a href="${_this.apiUrl}${build.id}/console" target="_blank">Console output</a>`,
               `<a href="${_this.apiUrl}${build.id}" target="_blank">Status page</a>`,
             ]);
