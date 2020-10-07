@@ -1,12 +1,12 @@
-const SensorHubConnector = require(__dirname + '/libs/SensorHubConnector.js');
-const MonitoringSensor = require(__dirname + '/libs/MonitoringSensor.js');
+const SensorHubConnector = require(__dirname + '/src/SensorHubConnector.js');
+const MonitoringSensor = require(__dirname + '/src/MonitoringSensor.js');
 // metrics
-const CPUMetric = require(__dirname + '/libs/CPUMetric.js');
-const HDDMetric = require(__dirname + '/libs/HDDMetric.js');
-const LAMetric = require(__dirname + '/libs/LAMetric.js');
-const RAMMetric = require(__dirname + '/libs/RAMMetric.js');
-const MySQLProcessesMetric = require(__dirname + '/libs/MySQLProcessesMetric.js');
-const ProcessesMetric = require(__dirname + '/libs/ProcessesMetric.js');
+const CPUMetric = require(__dirname + '/src/CPUMetric.js');
+const HDDMetric = require(__dirname + '/src/HDDMetric.js');
+const LAMetric = require(__dirname + '/src/LAMetric.js');
+const RAMMetric = require(__dirname + '/src/RAMMetric.js');
+const MySQLProcessesMetric = require(__dirname + '/src/MySQLProcessesMetric.js');
+const ProcessesMetric = require(__dirname + '/src/ProcessesMetric.js');
 
 module.exports = {
   MonitoringSensor: MonitoringSensor,

@@ -161,6 +161,27 @@ const config = {
         , password: ''
         }
       },
+      { name: 'Jenkins'
+      , refreshInterval: 5000
+      , rendererName: 'Chart'
+      , settings: {
+          apiUrl: 'http://localhost:8080'
+        }
+      },
+      { name: 'Jenkins'
+      , refreshInterval: 5000
+      , rendererName: 'Table'
+      , settings: {
+          apiUrl: 'http://localhost:8080'
+        }
+      },
+      { name: 'Jenkins'
+      , refreshInterval: 5000
+      , rendererName: 'Value'
+      , settings: {
+          apiUrl: 'http://localhost:8080'
+        }
+      },
     ]
   }
 };
