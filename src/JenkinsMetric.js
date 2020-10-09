@@ -121,7 +121,7 @@ class JenkinsMetric extends CustomMetric {
               build.displayName,
               _this.formatDate(build.timestamp),
               (build.building ? _this.formatDate(build.timestamp + build.estimatedDuration) : ''),
-              `${duration.toFixed()} Min`,
+              (build.building ? '' : `${duration.toFixed()} Min`),
               `<a href="${_this.apiUrl}${build.id}/console" target="_blank">Console output</a>`,
               `<a href="${_this.apiUrl}${build.id}" target="_blank">Status page</a>`,
             ]);
