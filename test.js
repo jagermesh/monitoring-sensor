@@ -124,6 +124,31 @@ const config = {
           mounts: '/System/Volumes/Data'
         }
       },
+      // Jenkins
+      { name: 'Jenkins'
+      , rendererName: 'Chart'
+      , settings: {
+          apiUrl: 'http://localhost:8080/job/project/',
+          username: 'admin',
+          password: '11acff4a9f050afc3787c908c0812c3c8d',
+        }
+      },
+      { name: 'Jenkins'
+      , rendererName: 'Table'
+      , settings: {
+          apiUrl: 'http://localhost:8080/job/project/',
+          username: 'admin',
+          password: '11acff4a9f050afc3787c908c0812c3c8d',
+        }
+      },
+      { name: 'Jenkins'
+      , rendererName: 'Value'
+      , settings: {
+          apiUrl: 'http://localhost:8080/job/project/',
+          username: 'admin',
+          password: '11acff4a9f050afc3787c908c0812c3c8d',
+        }
+      },
       // MySQLProcesses
       { name: 'MySQLProcesses'
       , rendererName: 'Chart'
@@ -149,28 +174,38 @@ const config = {
         , password: ''
         }
       },
-      { name: 'Jenkins'
+      // MySQL
+      { name: 'MySQL'
       , rendererName: 'Chart'
       , settings: {
-          apiUrl: 'http://localhost:8080/job/project/',
-          username: 'admin',
-          password: '11acff4a9f050afc3787c908c0812c3c8d',
+          host: 'localhost',
+          user: 'root',
+          password: '',
+          database: '',
+          sql: 'SHOW PROCESSLIST',
+          description: 'MySQL Process List'
         }
       },
-      { name: 'Jenkins'
+      { name: 'MySQL'
       , rendererName: 'Table'
       , settings: {
-          apiUrl: 'http://localhost:8080/job/project/',
-          username: 'admin',
-          password: '11acff4a9f050afc3787c908c0812c3c8d',
+          host: 'localhost',
+          user: 'root',
+          password: '',
+          database: '',
+          sql: 'SHOW PROCESSLIST',
+          description: 'MySQL Process List'
         }
       },
-      { name: 'Jenkins'
+      { name: 'MySQL'
       , rendererName: 'Value'
       , settings: {
-          apiUrl: 'http://localhost:8080/job/project/',
-          username: 'admin',
-          password: '11acff4a9f050afc3787c908c0812c3c8d',
+          host: 'localhost',
+          user: 'root',
+          password: '',
+          database: '',
+          sql: 'SHOW PROCESSLIST',
+          description: 'MySQL Process List'
         }
       },
     ]

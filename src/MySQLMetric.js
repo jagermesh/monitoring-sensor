@@ -7,10 +7,16 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class MySQLMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    metricConfig.rendererName = metricConfig.rendererName || 'Table';
+    metricConfig.refreshInterval = metricConfig.refreshInterval || 60000;
+    metricConfig.settings = Object.assign({ description: 'MySQL Query' }, metricConfig.settings);
+
     super(sensorConfig, metricConfig);
 
-    this.rendererName    = this.rendererName || 'Table';
-    this.refreshInterval = this.refreshInterval || 60000;
+    this.query = Handlebars.compile(this.metricConfig.settings.sql);
+    this.description = this.metricConfig.settings.description;
+    this.fields = this.metricConfig.settings.fields;
+    this.updateQueryVariables();
     this.connectionsPool = mysql.createPool({
       connectionLimit: 10,
       host: this.metricConfig.settings.host,
@@ -18,8 +24,6 @@ class MySQLMetric extends CustomMetric {
       password: this.metricConfig.settings.password,
       database: this.metricConfig.settings.database,
     });
-    this.query = Handlebars.compile(this.metricConfig.settings.sql);
-    this.updateQueryVariables();
   }
 
   updateQueryVariables() {
@@ -39,6 +43,10 @@ class MySQLMetric extends CustomMetric {
     });
   }
 
+  filterRow() {
+    return true;
+  }
+
   getData() {
     const _this = this;
 
@@ -48,7 +56,6 @@ class MySQLMetric extends CustomMetric {
           reject(error.sqlMessage);
           return;
         }
-        console.log(_this.query(_this.queryVariables));
         connection.query(_this.query(_this.queryVariables), function (error, results, fields) {
           connection.release();
           if (error) {
@@ -56,33 +63,37 @@ class MySQLMetric extends CustomMetric {
             return;
           }
           _this.updateQueryVariables();
-          const title    = _this.metricConfig.settings.description ? _this.metricConfig.settings.description : 'MySQL Query';
-          const subTitle = _this.metricConfig.settings.database;
+          const filteredResults = results.filter(function (result) {
+            return _this.filterRow(result);
+          });
+
+          const title    = _this.description;
+          const subTitle = _this.metricConfig.settings.database ? `${_this.metricConfig.settings.database}@${_this.metricConfig.settings.host}` : _this.metricConfig.settings.host;
           const points   = [];
           if (_this.metricConfig.settings.datasets) {
-            if (results.length > 0) {
+            if (filteredResults.length > 0) {
               _this.metricConfig.settings.datasets.map(function(dataset) {
-                points.push(results[0][dataset]);
+                points.push(filteredResults[0][dataset]);
               });
             }
           } else {
-            points.push(results.length);
+            points.push(filteredResults.length);
           }
           const values = [];
-          values.push({ raw: results.length, formatted: results.length });
+          values.push({ raw: filteredResults.length, formatted: filteredResults.length });
           const table = {
             header: [],
             body: [],
           };
-          fields.map(function(field) {
-            table.header.push(field.name);
+          table.header = _this.fields ? _this.fields : fields.map(function(field) {
+            return field.name;
           });
-          if (results.length > 0) {
-            for(let i = 0; i < results.length; i++) {
+          if (filteredResults.length > 0) {
+            for(let i = 0; i < filteredResults.length; i++) {
               let row = [];
-              for(let name in results[i]) {
-                row.push(results[i][name]);
-              }
+              table.header.map(function(fieldName) {
+                row.push(filteredResults[i][fieldName]);
+              });
               table.body.push(row);
             }
           }

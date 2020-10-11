@@ -6,11 +6,12 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class RAMMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    metricConfig.rendererName = metricConfig.rendererName || 'Chart';
+    metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
+
     super(sensorConfig, metricConfig);
 
-    this.rendererName    = this.rendererName || 'Chart';
-    this.refreshInterval = this.refreshInterval || 3000;
-    this.multiplier      = 1;
+    this.multiplier = 1;
   }
 
   getConfig() {

@@ -5,14 +5,16 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class ProcessesMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    metricConfig.rendererName = metricConfig.rendererName || 'Chart';
+    metricConfig.refreshInterval = metricConfig.refreshInterval || 5000;
+    metricConfig.settings = Object.assign({ processes: '' }, metricConfig.settings);
+
     super(sensorConfig, metricConfig);
 
-    this.rendererName    = this.rendererName || 'Chart';
-    this.refreshInterval = this.refreshInterval || 5000;
-    this.metricSettings  = Object.assign({ processes: '' }, this.metricConfig.settings);
-    this.metricSettings.processesList = [];
-    if (this.metricSettings.processes.length > 0) {
-      this.metricSettings.processesList = this.metricSettings.processes.split(',').map(function(processName) {
+    this.processes  = this.metricConfig.settings.processes;
+    this.processesList = [];
+    if (this.processes.length > 0) {
+      this.processesList = this.processes.split(',').map(function(processName) {
         return processName.trim();
       });
     }
@@ -25,10 +27,10 @@ class ProcessesMetric extends CustomMetric {
     return new Promise(function(resolve) {
       const config = Object.create({ });
       config.lineColor = 'green';
-      config.settings = _this.metricSettings.processes;
+      config.settings = _this.processes;
       config.datasets = [];
       config.datasets.push('Total');
-      _this.metricSettings.processesList.map(function(processName) {
+      _this.processesList.map(function(processName) {
         config.datasets.push(processName);
       });
       resolve(config);
@@ -42,8 +44,8 @@ class ProcessesMetric extends CustomMetric {
       si.processes().then(function(processes) {
         let processStat = {};
         let foundProcesses = [];
-        if (_this.metricSettings.processesList.length > 0) {
-          _this.metricSettings.processesList.map(function(processName) {
+        if (_this.processesList.length > 0) {
+          _this.processesList.map(function(processName) {
             processStat[processName] = 0;
             processes.list.map(function(processInfo) {
               if (processInfo.name.indexOf(processName) !== -1) {
@@ -57,8 +59,8 @@ class ProcessesMetric extends CustomMetric {
         }
         const title    = `Process(es)`;
         let subTitle = `${foundProcesses.length} process(es) running`;
-        if (_this.metricSettings.processesList.length > 0) {
-          subTitle += ` [${_this.metricSettings.processes}]`;
+        if (_this.processesList.length > 0) {
+          subTitle += ` [${_this.processes}]`;
         }
         const points = [];
         points.push(foundProcesses.length);

@@ -6,14 +6,20 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class HDDMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    metricConfig.rendererName = metricConfig.rendererName || 'Chart';
+    metricConfig.refreshInterval = metricConfig.refreshInterval || 30000;
+    metricConfig.settings = Object.assign({
+      mounts: '',
+      threshold: 90
+    }, metricConfig.settings);
+
     super(sensorConfig, metricConfig);
 
-    this.rendererName    = this.rendererName || 'Chart';
-    this.refreshInterval = this.refreshInterval || 30000;
-    this.metricSettings  = Object.assign({ mounts: '', threshold: 90 }, this.metricConfig.settings);
-    this.metricSettings.mountsList = [];
-    if (this.metricSettings.mounts.length > 0) {
-      this.metricSettings.mountsList = this.metricSettings.mounts.split(',').map(function(pathName) {
+    this.threshold  = this.metricConfig.settings.threshold;
+    this.mounts  = this.metricConfig.settings.mounts;
+    this.mountsList = [];
+    if (this.mounts.length > 0) {
+      this.mountsList = this.mounts.split(',').map(function(pathName) {
         return pathName.trim();
       });
     }
@@ -36,19 +42,19 @@ class HDDMetric extends CustomMetric {
           config.lineColor = 'green';
           config.max = 100;
           config.min = 0;
-          config.settings = _this.metricSettings.mounts;
+          config.settings = _this.mounts;
           config.datasets = [];
           let devices = data.filter(function(device) {
-            return ((_this.realMounts.indexOf(device.mount) !== -1) && ((_this.metricSettings.mountsList.length === 0) || (_this.metricSettings.mountsList.indexOf(device.mount) !== -1)));
+            return ((_this.realMounts.indexOf(device.mount) !== -1) && ((_this.mountsList.length === 0) || (_this.mountsList.indexOf(device.mount) !== -1)));
           });
           devices.map(function(device) {
             config.datasets.push(device.mount);
           });
-          if (_this.metricSettings.threshold) {
+          if (_this.threshold) {
             config.ranges = [];
             config.ranges.push({
-              value:     _this.metricSettings.threshold,
-              title:     `Critical (>${_this.metricSettings.threshold.toFixed(2)})`,
+              value:     _this.threshold,
+              title:     `Critical (>${_this.threshold.toFixed(2)})`,
               lineColor: 'red',
             });
           }
@@ -64,7 +70,7 @@ class HDDMetric extends CustomMetric {
     return new Promise(function(resolve, reject) {
       si.fsSize().then(function(data) {
         let devices = data.filter(function(device) {
-          return ((_this.realMounts.indexOf(device.mount) !== -1) && ((_this.metricSettings.mountsList.length === 0) || (_this.metricSettings.mountsList.indexOf(device.mount) !== -1)));
+          return ((_this.realMounts.indexOf(device.mount) !== -1) && ((_this.mountsList.length === 0) || (_this.mountsList.indexOf(device.mount) !== -1)));
         });
         let totalUsed = 0;
         let totalSize = 0;

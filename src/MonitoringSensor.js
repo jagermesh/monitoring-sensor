@@ -63,7 +63,7 @@ class MonitoringSensor {
       registerMetric(metricDescriptor);
       setInterval(function() {
         gatherAndSendData(metric, metricDescriptor);
-      }, metric.refreshInterval);
+      }, metricDescriptor.metricInfo.metricRefreshInterval);
     });
 
     _this.logger.log(`Connecting to hub at ${_this.sensorConfig.hubUrl}`);

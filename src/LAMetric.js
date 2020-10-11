@@ -5,10 +5,10 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class LAMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
-    super(sensorConfig, metricConfig);
+    metricConfig.rendererName = metricConfig.rendererName || 'Chart';
+    metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
 
-    this.rendererName    = this.rendererName || 'Chart';
-    this.refreshInterval = this.refreshInterval || 3000;
+    super(sensorConfig, metricConfig);
 
     this.cpus     = os.cpus().length;
     this.critical = this.cpus * 0.75;

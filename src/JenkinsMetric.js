@@ -6,13 +6,14 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class JenkinsMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    metricConfig.rendererName = metricConfig.rendererName || 'Table';
+    metricConfig.refreshInterval = metricConfig.refreshInterval || 5000;
+
     super(sensorConfig, metricConfig);
 
-    this.rendererName    = this.rendererName || 'Table';
-    this.refreshInterval = this.refreshInterval || 5000;
-    this.fields          = ['Id', 'User', 'Host', 'db', 'Command', 'Time', 'State', 'Progress', 'Info'];
-    this.apiUrl          = this.metricConfig.settings.apiUrl;
-    this.cache           = new Map();
+    this.apiUrl = this.metricConfig.settings.apiUrl;
+    this.fields = ['Id', 'User', 'Host', 'db', 'Command', 'Time', 'State', 'Progress', 'Info'];
+    this.cache = new Map();
   }
 
   getConfig() {

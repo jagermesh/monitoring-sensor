@@ -6,14 +6,16 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class CPUMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    metricConfig.rendererName = metricConfig.rendererName || 'Chart';
+    metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
+    metricConfig.settings = Object.assign({ processes: '' }, metricConfig.settings);
+
     super(sensorConfig, metricConfig);
 
-    this.rendererName    = this.rendererName || 'Chart';
-    this.refreshInterval = this.refreshInterval || 3000;
-    this.metricSettings  = Object.assign({ processes: '' }, this.metricConfig.settings);
-    this.metricSettings.processesList = [];
-    if (this.metricSettings.processes.length > 0) {
-      this.metricSettings.processesList = this.metricSettings.processes.split(',').map(function(processName) {
+    this.processes  = this.metricConfig.settings.processes;
+    this.processesList = [];
+    if (this.processes.length > 0) {
+      this.processesList = this.processes.split(',').map(function(processName) {
         return processName.trim();
       });
     }
@@ -30,11 +32,11 @@ class CPUMetric extends CustomMetric {
       config.lineColor = 'green';
       config.suggestedMax = 100;
       config.min = 0;
-      config.settings = _this.metricSettings.processes;
+      config.settings = _this.processes;
       config.datasets = [];
       config.datasets.push('Overall');
-      if (_this.metricSettings.processesList.length > 0) {
-        _this.metricSettings.processesList.map(function(processName) {
+      if (_this.processesList.length > 0) {
+        _this.processesList.map(function(processName) {
           config.datasets.push(processName);
         });
       } else {
@@ -71,9 +73,9 @@ class CPUMetric extends CustomMetric {
         points.push(currentLoad);
         const values = [];
         const table = { header: [], body: [] };
-        if (_this.metricSettings.processesList.length > 0) {
+        if (_this.processesList.length > 0) {
           table.header = ['Process', 'CPU', 'Memory'];
-          si.services(_this.metricSettings.processes).then(function (stats) {
+          si.services(_this.processes).then(function (stats) {
             let max = 0;
             let avg = 0;
             let sum = 0;
