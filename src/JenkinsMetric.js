@@ -56,85 +56,90 @@ class JenkinsMetric extends CustomMetric {
     const _this = this;
 
     return new Promise(function(resolve, reject) {
-      axios.get(_this.apiUrl + 'api/json').then(async function(response) {
+      const params = {};
+      if (_this.metricConfig.settings.username || _this.metricConfig.settings.password) {
+        params.auth = {
+          username: _this.metricConfig.settings.username,
+          password: _this.metricConfig.settings.password,
+        };
+      }
+      axios.get(_this.apiUrl + 'api/json', params).then(async function(response) {
         let builds = response.data.builds;
-        if (builds && (builds.length > 0)) {
-          let allBuilds = [];
-          let missingBuilds = [];
+        let allBuilds = [];
+        let missingBuilds = [];
 
-          builds.map(function(build) {
-            if (_this.cache.has(build.number)) {
-              allBuilds.push(_this.cache.get(build.number));
-            } else {
-              missingBuilds.push(build);
-            }
-          });
+        builds.map(function(build) {
+          if (_this.cache.has(build.number)) {
+            allBuilds.push(_this.cache.get(build.number));
+          } else {
+            missingBuilds.push(build);
+          }
+        });
 
-          await missingBuilds.reduce(function(promise, build) {
-            return promise.then(function() {
-              return axios.get(`${build.url}api/json`).then(function(response) {
-                let build = response.data;
-                build.building = (build.building || !build.result);
-                if (build.building) {
-                  build.status = 'RUNNING';
-                } else {
-                  build.status = build.result;
-                  _this.cache.set(build.number, build);
-                }
-                allBuilds.push(build);
-              });
+        await missingBuilds.reduce(function(promise, build) {
+          return promise.then(function() {
+            return axios.get(`${build.url}api/json`, params).then(function(response) {
+              let build = response.data;
+              build.building = (build.building || !build.result);
+              if (build.building) {
+                build.status = 'RUNNING';
+              } else {
+                build.status = build.result;
+                _this.cache.set(build.number, build);
+              }
+              allBuilds.push(build);
             });
-          }, Promise.resolve());
-
-          allBuilds.sort(function compare(a, b) {
-            return (a.number > b.number ? -1 : (a.number < b.number ? 1 : 0));
           });
+        }, Promise.resolve());
 
-          let activeBuilds  = allBuilds.filter(function(build) { return build.building; });
-          let successBuilds = allBuilds.filter(function(build) { return (!build.building && (build.result === 'SUCCESS')); });
-          let failedBuilds  = allBuilds.filter(function(build) { return (!build.building && (build.result !== 'SUCCESS')); });
+        allBuilds.sort(function compare(a, b) {
+          return (a.number > b.number ? -1 : (a.number < b.number ? 1 : 0));
+        });
 
-          const title = 'Jenkins Builds';
-          const subTitle = `Total ${allBuilds.length}, Active ${activeBuilds.length}, Success ${successBuilds.length}, Failed ${failedBuilds.length}`;
-          const points = [];
-          points.push(activeBuilds.length);
-          const values = [];
-          values.push({ raw: activeBuilds.length, label: 'Running' });
-          values.push({ raw: successBuilds.length, formatted: `<span style="color:green;">${successBuilds.length}</span>`, label: 'Success' });
-          values.push({ raw: failedBuilds.length, formatted: `<span style="color:red;">${failedBuilds.length}</span>`, label: 'Failed' });
-          const table = { header: [], body: [] };
-          table.header = [
-            'Number',
-            'Status',
-            'Name',
-            'Started',
-            'Est Finish',
-            'Duration',
-            'Console output',
-            'Status page',
-          ];
-          allBuilds.map(function(build) {
-            let duration = build.duration/1000/60;
-            table.body.push([
-              build.number,
-              _this.formatStatusName(build.status),
-              build.displayName,
-              _this.formatDate(build.timestamp),
-              (build.building ? _this.formatDate(build.timestamp + build.estimatedDuration) : ''),
-              (build.building ? '' : `${duration.toFixed()} Min`),
-              `<a href="${_this.apiUrl}${build.id}/console" target="_blank">Console output</a>`,
-              `<a href="${_this.apiUrl}${build.id}" target="_blank">Status page</a>`,
-            ]);
-          });
+        let activeBuilds  = allBuilds.filter(function(build) { return build.building; });
+        let successBuilds = allBuilds.filter(function(build) { return (!build.building && (build.result === 'SUCCESS')); });
+        let failedBuilds  = allBuilds.filter(function(build) { return (!build.building && (build.result !== 'SUCCESS')); });
 
-          resolve({
-            title:    title,
-            subTitle: subTitle,
-            values:   values,
-            points:   points,
-            table:    table,
-          });
-        }
+        const title = 'Jenkins Builds';
+        const subTitle = `Total ${allBuilds.length}, Active ${activeBuilds.length}, Success ${successBuilds.length}, Failed ${failedBuilds.length}`;
+        const points = [];
+        points.push(activeBuilds.length);
+        const values = [];
+        values.push({ raw: activeBuilds.length, label: 'Running' });
+        values.push({ raw: successBuilds.length, formatted: `<span style="color:green;">${successBuilds.length}</span>`, label: 'Success' });
+        values.push({ raw: failedBuilds.length, formatted: `<span style="color:red;">${failedBuilds.length}</span>`, label: 'Failed' });
+        const table = { header: [], body: [] };
+        table.header = [
+          'Number',
+          'Status',
+          'Name',
+          'Started',
+          'Est Finish',
+          'Duration',
+          'Console output',
+          'Status page',
+        ];
+        allBuilds.map(function(build) {
+          let duration = build.duration/1000/60;
+          table.body.push([
+            build.number,
+            _this.formatStatusName(build.status),
+            build.displayName,
+            _this.formatDate(build.timestamp),
+            (build.building ? _this.formatDate(build.timestamp + build.estimatedDuration) : ''),
+            (build.building ? '' : `${duration.toFixed()} Min`),
+            `<a href="${_this.apiUrl}${build.id}/console" target="_blank">Console output</a>`,
+            `<a href="${_this.apiUrl}${build.id}" target="_blank">Status page</a>`,
+          ]);
+        });
+
+        resolve({
+          title:    title,
+          subTitle: subTitle,
+          values:   values,
+          points:   points,
+          table:    table,
+        });
       }, reject);
     });
   }

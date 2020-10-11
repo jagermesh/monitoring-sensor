@@ -6,11 +6,9 @@ const config = {
   , metrics: [
       // CPU
       { name: 'CPU'
-      , refreshInterval: 1000
       , rendererName: 'Chart'
       },
       { name: 'CPU'
-      , refreshInterval: 1000
       , rendererName: 'Chart'
       , settings: {
           processes: 'php,node'
@@ -18,22 +16,27 @@ const config = {
       },
       { name: 'CPU'
       , rendererName: 'Value'
-      , refreshInterval: 1000
       },
       { name: 'CPU'
       , rendererName: 'Value'
-      , refreshInterval: 1000
       , settings: {
           processes: 'php,node'
         }
       },
       { name: 'CPU'
-      , refreshInterval: 1000
       , rendererName: 'Table'
       },
       { name: 'CPU'
-      , refreshInterval: 1000
       , rendererName: 'Table'
+      , settings: {
+          processes: 'php,node'
+        }
+      },
+      { name: 'CPU'
+      , rendererName: 'Gauge'
+      },
+      { name: 'CPU'
+      , rendererName: 'Gauge'
       , settings: {
           processes: 'php,node'
         }
@@ -41,59 +44,53 @@ const config = {
       // RAM
       { name: 'RAM'
       , rendererName: 'Chart'
-      , refreshInterval: 1000
       },
       { name: 'RAM'
       , rendererName: 'Value'
-      , refreshInterval: 1000
       },
       { name: 'RAM'
       , rendererName: 'Table'
-      , refreshInterval: 1000
+      },
+      { name: 'RAM'
+      , rendererName: 'Gauge'
       },
       // LA
       { name: 'LA'
       , rendererName: 'Chart'
-      , refreshInterval: 1000
       },
       { name: 'LA'
       , rendererName: 'Value'
-      , refreshInterval: 1000
       },
       { name: 'LA'
       , rendererName: 'Table'
-      , refreshInterval: 1000
+      },
+      { name: 'LA'
+      , rendererName: 'Gauge'
       },
       // Processes
       { name: 'Processes'
       , rendererName: 'Chart'
-      , refreshInterval: 5000
       },
       { name: 'Processes'
       , rendererName: 'Value'
-      , refreshInterval: 5000
       },
       { name: 'Processes'
       , rendererName: 'Table'
-      , refreshInterval: 5000
       },
       { name: 'Processes'
       , rendererName: 'Chart'
-      , refreshInterval: 5000
       , settings: {
           processes: 'php,node'
         }
       },
       { name: 'Processes'
       , rendererName: 'Value'
-      , refreshInterval: 5000
       , settings: {
           processes: 'php,node'
         }
       },
       { name: 'Processes'
       , rendererName: 'Table'
-      , refreshInterval: 5000
       , settings: {
           processes: 'php,node'
         }
@@ -101,18 +98,14 @@ const config = {
       // HDD
       { name: 'HDD'
       , rendererName: 'Chart'
-      , refreshInterval: 1000
       },
       { name: 'HDD'
-      , refreshInterval: 1000
       , rendererName: 'Table'
       },
       { name: 'HDD'
-      , refreshInterval: 1000
       , rendererName: 'Value'
       },
       { name: 'HDD'
-      , refreshInterval: 1000
       , rendererName: 'Chart'
       , settings: {
           mounts: '/System/Volumes/Data'
@@ -120,14 +113,12 @@ const config = {
         }
       },
       { name: 'HDD'
-      , refreshInterval: 1000
       , rendererName: 'Table'
       , settings: {
           mounts: '/System/Volumes/Data'
         }
       },
       { name: 'HDD'
-      , refreshInterval: 1000
       , rendererName: 'Value'
       , settings: {
           mounts: '/System/Volumes/Data'
@@ -135,7 +126,6 @@ const config = {
       },
       // MySQLProcesses
       { name: 'MySQLProcesses'
-      , refreshInterval: 5000
       , rendererName: 'Chart'
       , settings: {
           host: 'localhost'
@@ -144,7 +134,6 @@ const config = {
         }
       },
       { name: 'MySQLProcesses'
-      , refreshInterval: 5000
       , rendererName: 'Table'
       , settings: {
           host: 'localhost'
@@ -153,7 +142,6 @@ const config = {
         }
       },
       { name: 'MySQLProcesses'
-      , refreshInterval: 5000
       , rendererName: 'Value'
       , settings: {
           host: 'localhost'
@@ -162,24 +150,27 @@ const config = {
         }
       },
       { name: 'Jenkins'
-      , refreshInterval: 5000
       , rendererName: 'Chart'
       , settings: {
-          apiUrl: 'http://localhost:8080'
+          apiUrl: 'http://localhost:8080/job/project/',
+          username: 'admin',
+          password: '11acff4a9f050afc3787c908c0812c3c8d',
         }
       },
       { name: 'Jenkins'
-      , refreshInterval: 5000
       , rendererName: 'Table'
       , settings: {
-          apiUrl: 'http://localhost:8080'
+          apiUrl: 'http://localhost:8080/job/project/',
+          username: 'admin',
+          password: '11acff4a9f050afc3787c908c0812c3c8d',
         }
       },
       { name: 'Jenkins'
-      , refreshInterval: 5000
       , rendererName: 'Value'
       , settings: {
-          apiUrl: 'http://localhost:8080'
+          apiUrl: 'http://localhost:8080/job/project/',
+          username: 'admin',
+          password: '11acff4a9f050afc3787c908c0812c3c8d',
         }
       },
     ]

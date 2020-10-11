@@ -24,7 +24,9 @@ class LAMetric extends CustomMetric {
       config.suggestedMax = _this.overload;
       config.min = 0;
       config.datasets = [];
-      config.datasets.push(_this.metricName);
+      config.datasets.push('LA 1 Min');
+      config.datasets.push('LA 5 Min');
+      config.datasets.push('LA 15 Min');
       config.ranges = [];
       config.ranges.push({
         value: _this.critical,
@@ -68,6 +70,8 @@ class LAMetric extends CustomMetric {
       table.body.push(['LA 15 Min', la[2].toFixed(2)]);
       const points   = [];
       points.push(la[0]);
+      points.push(la[1]);
+      points.push(la[2]);
       const values = [];
       values.push({ raw: la[0], threshold: la[0], formatted: la[0].toFixed(2), label: 'LA 1 Min' });
       values.push({ raw: la[1], threshold: la[1], formatted: la[1].toFixed(2), label: 'LA 5 Min' });
