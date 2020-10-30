@@ -9,9 +9,9 @@
     "gulp": "^4.0.2",
     "gulp-jshint": "^2.1.0",
     "jshint": "^2.12.0",
-    "monitoring-dashboard": "^1.0.28",
-    "monitoring-hub": "^1.0.17",
-    "monitoring-progress-logger": "^1.0.11"
+    "monitoring-dashboard": "^1.0.39",
+    "monitoring-hub": "^1.0.20",
+    "monitoring-progress-logger": "^1.0.12"
   },
   "dependencies": {
     "axios": "^0.20.0",
@@ -21,7 +21,7 @@
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
     "socket.io-client": "^2.3.1",
-    "systeminformation": "^4.27.6",
+    "systeminformation": "^4.27.10",
     "uuid": "^3.4.0"
   },
   "deprecated": false,
