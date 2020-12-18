@@ -20,9 +20,9 @@
     "handlebars": "^4.7.6",
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
-    "socket.io-client": "^3.0.3",
-    "systeminformation": "^4.30.5",
-    "uuid": "^8.3.1"
+    "socket.io-client": "^3.0.4",
+    "systeminformation": "^4.32.0",
+    "uuid": "^8.3.2"
   },
   "deprecated": false,
   "description": "Monitoring Sensor",
