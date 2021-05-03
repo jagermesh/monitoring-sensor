@@ -1,5 +1,5 @@
-const uuid   = require('uuid');
-const os     = require('os');
+const uuid = require('uuid');
+const os = require('os');
 
 const SensorHubConnector = require(__dirname + '/SensorHubConnector.js');
 const Logger = require(__dirname + '/Logger.js');
@@ -9,16 +9,23 @@ class MonitoringSensor {
   constructor(config, logger) {
     const _this = this;
 
-    _this.sensorConfig = Object.assign({ hubUrl: 'http://localhost:8082', name: os.hostname() }, config);
+    _this.sensorConfig = Object.assign({
+        hubUrl: 'http://localhost:8082',
+        name: os.hostname()
+      },
+      config
+    );
 
-    _this.sensorUid  = uuid.v4();
+    _this.sensorUid = uuid.v4();
     _this.sensorName = _this.sensorConfig.name;
-    _this.metrics    = [];
+    _this.metrics = [];
 
     _this.logger = (logger || new Logger('SNS'));
   }
 
   getInfo() {
+    const _this = this;
+
     return {
       sensorUid: this.sensorUid,
       sensorName: this.sensorName,

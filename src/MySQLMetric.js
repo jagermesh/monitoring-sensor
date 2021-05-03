@@ -7,6 +7,8 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class MySQLMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    const _this = this;
+
     metricConfig.rendererName = metricConfig.rendererName || 'Table';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 60000;
     metricConfig.settings = Object.assign({ description: 'MySQL Query' }, metricConfig.settings);
@@ -27,6 +29,8 @@ class MySQLMetric extends CustomMetric {
   }
 
   updateQueryVariables() {
+    const _this = this;
+
     this.queryVariables = {
       lastRunAt: moment().format('YYYY-MM-DD HH:mm:ss')
     };
@@ -44,6 +48,8 @@ class MySQLMetric extends CustomMetric {
   }
 
   filterRow() {
+    const _this = this;
+
     return true;
   }
 
@@ -67,9 +73,9 @@ class MySQLMetric extends CustomMetric {
             return _this.filterRow(result);
           });
 
-          const title    = _this.description;
+          const title = _this.description;
           const subTitle = _this.metricConfig.settings.database ? `${_this.metricConfig.settings.database}@${_this.metricConfig.settings.host}` : _this.metricConfig.settings.host;
-          const points   = [];
+          const points = [];
           if (_this.metricConfig.settings.datasets) {
             if (filteredResults.length > 0) {
               _this.metricConfig.settings.datasets.map(function(dataset) {
@@ -80,7 +86,10 @@ class MySQLMetric extends CustomMetric {
             points.push(filteredResults.length);
           }
           const values = [];
-          values.push({ raw: filteredResults.length, formatted: filteredResults.length });
+          values.push({
+            raw: filteredResults.length,
+            formatted: filteredResults.length
+          });
           const table = {
             header: [],
             body: [],
@@ -98,11 +107,11 @@ class MySQLMetric extends CustomMetric {
             }
           }
           resolve({
-            title:    title,
+            title: title,
             subTitle: subTitle,
-            values:   values,
-            points:   points,
-            table:    table,
+            values: values,
+            points: points,
+            table: table,
           });
         });
       });

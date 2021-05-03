@@ -5,6 +5,8 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class ProcessesMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    const _this = this;
+
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 5000;
     metricConfig.settings = Object.assign({ processes: '' }, metricConfig.settings);
@@ -57,7 +59,7 @@ class ProcessesMetric extends CustomMetric {
         } else {
           foundProcesses = processes.list;
         }
-        const title    = `Process(es)`;
+        const title = `Process(es)`;
         let subTitle = `${foundProcesses.length} process(es) running`;
         if (_this.processesList.length > 0) {
           subTitle += ` [${_this.processes}]`;
@@ -69,7 +71,7 @@ class ProcessesMetric extends CustomMetric {
         }
         const table = {
           header: _this.fields,
-          body:    [],
+          body: [],
         };
         foundProcesses.map(function(processInfo) {
           let row = [];
@@ -81,11 +83,11 @@ class ProcessesMetric extends CustomMetric {
         const values = [];
         values.push({ raw: foundProcesses.length });
         resolve({
-          title:    title,
+          title: title,
           subTitle: subTitle,
-          values:   values,
-          points:   points,
-          table:    table,
+          values: values,
+          points: points,
+          table: table,
         });
       }, reject);
     });

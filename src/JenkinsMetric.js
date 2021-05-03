@@ -6,6 +6,8 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class JenkinsMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    const _this = this;
+
     metricConfig.rendererName = metricConfig.rendererName || 'Table';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 5000;
 
@@ -17,6 +19,8 @@ class JenkinsMetric extends CustomMetric {
   }
 
   getConfig() {
+    const _this = this;
+
     return new Promise(function(resolve) {
       const config = Object.create({ });
       config.lineColor = 'green';
@@ -27,6 +31,8 @@ class JenkinsMetric extends CustomMetric {
   }
 
   formatDate(d) {
+    const _this = this;
+
     let result = '';
     let m = moment(d);
     if (m.isSame(new Date(), 'day')) {
@@ -41,6 +47,8 @@ class JenkinsMetric extends CustomMetric {
   }
 
   formatStatusName(name) {
+    const _this = this;
+
     switch(name) {
       case 'SUCCESS':
         return `<span style="color:green;">Success</span>`;
@@ -97,19 +105,41 @@ class JenkinsMetric extends CustomMetric {
           return (a.number > b.number ? -1 : (a.number < b.number ? 1 : 0));
         });
 
-        let activeBuilds  = allBuilds.filter(function(build) { return build.building; });
-        let successBuilds = allBuilds.filter(function(build) { return (!build.building && (build.result === 'SUCCESS')); });
-        let failedBuilds  = allBuilds.filter(function(build) { return (!build.building && (build.result !== 'SUCCESS')); });
+        let activeBuilds = allBuilds.filter(function(build) {
+          return build.building;
+        });
+
+        let successBuilds = allBuilds.filter(function(build) {
+          return (!build.building && (build.result === 'SUCCESS'));
+        });
+
+        let failedBuilds = allBuilds.filter(function(build) {
+          return (!build.building && (build.result !== 'SUCCESS'));
+        });
 
         const title = 'Jenkins Builds';
         const subTitle = `Total ${allBuilds.length}, Active ${activeBuilds.length}, Success ${successBuilds.length}, Failed ${failedBuilds.length}`;
         const points = [];
         points.push(activeBuilds.length);
         const values = [];
-        values.push({ raw: activeBuilds.length, label: 'Running' });
-        values.push({ raw: successBuilds.length, formatted: `<span style="color:green;">${successBuilds.length}</span>`, label: 'Success' });
-        values.push({ raw: failedBuilds.length, formatted: `<span style="color:red;">${failedBuilds.length}</span>`, label: 'Failed' });
-        const table = { header: [], body: [] };
+        values.push({
+          raw: activeBuilds.length,
+          label: 'Running'
+        });
+        values.push({
+          raw: successBuilds.length,
+          formatted: `<span style="color:green;">${successBuilds.length}</span>`,
+          label: 'Success'
+        });
+        values.push({
+          raw: failedBuilds.length,
+          formatted: `<span style="color:red;">${failedBuilds.length}</span>`,
+          label: 'Failed'
+        });
+        const table = {
+          header: [],
+          body: []
+        };
         table.header = [
           'Number',
           'Status',
@@ -135,11 +165,11 @@ class JenkinsMetric extends CustomMetric {
         });
 
         resolve({
-          title:    title,
+          title: title,
           subTitle: subTitle,
-          values:   values,
-          points:   points,
-          table:    table,
+          values: values,
+          points: points,
+          table: table,
         });
       }, reject);
     });

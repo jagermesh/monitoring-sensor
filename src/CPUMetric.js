@@ -1,11 +1,13 @@
 const os = require('os');
 const si = require('systeminformation');
 
-const CustomMetric = require(__dirname + '/CustomMetric.js');
+const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 
 class CPUMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    const _this = this;
+
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
     metricConfig.settings = Object.assign({ processes: '' }, metricConfig.settings);
@@ -63,13 +65,13 @@ class CPUMetric extends CustomMetric {
 
     return new Promise(function(resolve, reject) {
       si.currentLoad().then(function (stats) {
-        const currentLoad       = stats.currentload;
-        const currentLoadUser   = stats.currentload_user;
+        const currentLoad = stats.currentload;
+        const currentLoadUser = stats.currentload_user;
         const currentLoadSystem = stats.currentload_system;
-        const currentLoadIdle   = stats.currentload_idle;
-        const title             = `CPU Load ${_this.cpus} CPUs`;
-        const subTitle          = `Overall ${currentLoad.toFixed(2)}%,  User ${currentLoadUser.toFixed(2)}%, System ${currentLoadSystem.toFixed(2)}%, Idle ${currentLoadIdle.toFixed(2)}%`;
-        const points            = [];
+        const currentLoadIdle = stats.currentload_idle;
+        const title = `CPU Load ${_this.cpus} CPUs`;
+        const subTitle = `Overall ${currentLoad.toFixed(2)}%,  User ${currentLoadUser.toFixed(2)}%, System ${currentLoadSystem.toFixed(2)}%, Idle ${currentLoadIdle.toFixed(2)}%`;
+        const points = [];
         points.push(currentLoad);
         const values = [];
         const table = { header: [], body: [] };
@@ -90,30 +92,43 @@ class CPUMetric extends CustomMetric {
             if (stats.length > 0) {
               avg = sum/stats.length;
             }
-            values.push({ raw: avg, threshold: avg, formatted: `${avg.toFixed(2)}%`, label: 'Avg' });
-            values.push({ raw: max, formatted: `${max.toFixed(2)}%`, label: 'Max' });
+            values.push({
+              raw: avg,
+              threshold: avg,
+              formatted: `${avg.toFixed(2)}%`,
+              label: 'Avg'
+            });
+            values.push({
+              raw: max,
+              formatted: `${max.toFixed(2)}%`,
+              label: 'Max'
+            });
             resolve({
-              title:    title,
+              title:  title,
               subTitle: subTitle,
-              values:   values,
-              points:   points,
-              table:    table,
+              values: values,
+              points: points,
+              table: table,
             });
           }, reject);
         } else {
           table.body.push(['Overall', `${currentLoad.toFixed(2)}%`]);
-          table.body.push(['User',    `${currentLoadUser.toFixed(2)}%`]);
-          table.body.push(['System',  `${currentLoadSystem.toFixed(2)}%`]);
-          table.body.push(['Idle',    `${currentLoadIdle.toFixed(2)}%`]);
+          table.body.push(['User', `${currentLoadUser.toFixed(2)}%`]);
+          table.body.push(['System', `${currentLoadSystem.toFixed(2)}%`]);
+          table.body.push(['Idle', `${currentLoadIdle.toFixed(2)}%`]);
           points.push(currentLoadUser);
           points.push(currentLoadSystem);
-          values.push({ raw: currentLoad, threshold: currentLoad, formatted: `${currentLoad.toFixed(2)}%` });
+          values.push({
+            raw: currentLoad,
+            threshold: currentLoad,
+            formatted: `${currentLoad.toFixed(2)}%`
+          });
           resolve({
-            title:    title,
+            title: title,
             subTitle: subTitle,
-            values:   values,
-            points:   points,
-            table:    table,
+            values: values,
+            points: points,
+            table: table,
           });
         }
       }, reject);

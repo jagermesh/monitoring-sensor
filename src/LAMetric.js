@@ -5,12 +5,14 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class LAMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    const _this = this;
+
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
 
     super(sensorConfig, metricConfig);
 
-    this.cpus     = os.cpus().length;
+    this.cpus = os.cpus().length;
     this.critical = this.cpus * 0.75;
     this.overload = this.cpus;
   }
@@ -43,6 +45,8 @@ class LAMetric extends CustomMetric {
   }
 
   writeValue(value) {
+    const _this = this;
+
     let message = '<b';
     if (value > this.overload) {
       message += ' style="color:red;"';
@@ -58,12 +62,12 @@ class LAMetric extends CustomMetric {
     const _this = this;
 
     return new Promise(function(resolve) {
-      const la       = os.loadavg();
-      const title    = `LA ${_this.cpus} CPUs`;
+      const la = os.loadavg();
+      const title = `LA ${_this.cpus} CPUs`;
       const subTitle = `${_this.writeValue(la[0])} · ${_this.writeValue(la[1])} · ${_this.writeValue(la[2])}`;
       const table = {
         header: [],
-        body:   [],
+        body: [],
       };
       table.body.push(['LA 1 Min',  la[0].toFixed(2)]);
       table.body.push(['LA 5 Min',  la[1].toFixed(2)]);
@@ -73,15 +77,30 @@ class LAMetric extends CustomMetric {
       points.push(la[1]);
       points.push(la[2]);
       const values = [];
-      values.push({ raw: la[0], threshold: la[0], formatted: la[0].toFixed(2), label: 'LA 1 Min' });
-      values.push({ raw: la[1], threshold: la[1], formatted: la[1].toFixed(2), label: 'LA 5 Min' });
-      values.push({ raw: la[2], threshold: la[2], formatted: la[2].toFixed(2), label: 'LA 15 Min' });
+      values.push({
+        raw: la[0],
+        threshold: la[0],
+        formatted: la[0].toFixed(2),
+        label: 'LA 1 Min'
+      });
+      values.push({
+        raw: la[1],
+        threshold: la[1],
+        formatted: la[1].toFixed(2),
+        label: 'LA 5 Min'
+      });
+      values.push({
+        raw: la[2],
+        threshold: la[2],
+        formatted: la[2].toFixed(2),
+        label: 'LA 15 Min'
+      });
       resolve({
-        title:     title,
-        subTitle:  subTitle,
-        values:    values,
-        points:    points,
-        table:     table,
+        title: title,
+        subTitle: subTitle,
+        values: values,
+        points: points,
+        table: table,
       });
     });
   }

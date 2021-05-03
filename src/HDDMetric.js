@@ -1,29 +1,33 @@
 const bytes = require('bytes');
-const si    = require('systeminformation');
+const si = require('systeminformation');
 
-const CustomMetric = require(__dirname + '/CustomMetric.js');
+const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 
 class HDDMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    const _this = this;
+
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 30000;
     metricConfig.settings = Object.assign({
-      mounts: '',
-      threshold: 90
-    }, metricConfig.settings);
+        mounts: '',
+        threshold: 90
+      },
+      metricConfig.settings
+    );
 
     super(sensorConfig, metricConfig);
 
-    this.threshold  = this.metricConfig.settings.threshold;
-    this.mounts  = this.metricConfig.settings.mounts;
-    this.mountsList = [];
-    if (this.mounts.length > 0) {
-      this.mountsList = this.mounts.split(',').map(function(pathName) {
+    _this.threshold  = _this.metricConfig.settings.threshold;
+    _this.mounts  = _this.metricConfig.settings.mounts;
+    _this.mountsList = [];
+    if (_this.mounts.length > 0) {
+      _this.mountsList = this.mounts.split(',').map(function(pathName) {
         return pathName.trim();
       });
     }
-    this.realMounts = [];
+    _this.realMounts = [];
   }
 
   getConfig() {
@@ -53,8 +57,8 @@ class HDDMetric extends CustomMetric {
           if (_this.threshold) {
             config.ranges = [];
             config.ranges.push({
-              value:     _this.threshold,
-              title:     `Critical (>${_this.threshold.toFixed(2)})`,
+              value: _this.threshold,
+              title: `Critical (>${_this.threshold.toFixed(2)})`,
               lineColor: 'red',
             });
           }
@@ -86,20 +90,40 @@ class HDDMetric extends CustomMetric {
         };
         devices.map(function(device) {
           points.push(device.use);
-          table.body.push([ device.mount, bytes(device.size), bytes(device.used), `${device.use}%`, device.type, device.fs ]);
+          table.body.push([
+            device.mount,
+            bytes(device.size),
+            bytes(device.used),
+            `${device.use}%`,
+            device.type,
+            device.fs
+          ]);
         });
         const values = [];
-        values.push({ raw: usagePercent, threshold: usagePercent, formatted: `${usagePercent.toFixed(2)}%`, label: 'Used, %' });
-        values.push({ raw: totalUsed, formatted: bytes(totalUsed), label: 'Used, size' });
-        values.push({ raw: totalSize, formatted: bytes(totalSize), label: 'Total, size' });
-        const title    = `HDD`;
+        values.push({
+          raw: usagePercent,
+          threshold: usagePercent,
+          formatted: `${usagePercent.toFixed(2)}%`,
+          label: 'Used, %'
+        });
+        values.push({
+          raw: totalUsed,
+          formatted: bytes(totalUsed),
+          label: 'Used, size'
+        });
+        values.push({
+          raw: totalSize,
+          formatted: bytes(totalSize),
+          label: 'Total, size'
+        });
+        const title = `HDD`;
         const subTitle = `Total ${bytes(totalSize)}, Used ${bytes(totalUsed)} (${usagePercent.toFixed(2)}%)`;
         resolve({
-          title:    title,
+          title: title,
           subTitle: subTitle,
-          values:   values,
-          points:   points,
-          table:    table,
+          values: values,
+          points: points,
+          table: table,
         });
       }, reject);
     });

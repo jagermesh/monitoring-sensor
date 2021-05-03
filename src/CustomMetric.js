@@ -1,24 +1,31 @@
 const uuid = require('uuid');
-const os   = require('os');
+const os = require('os');
 
 class CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
-    this.sensorConfig = Object.assign({
-      name: os.hostname()
-    }, sensorConfig);
+    const _this = this;
 
-    this.metricConfig = Object.assign({
-      uid: uuid.v4(),
-      name: 'Custom',
-      tags: '',
-      rendererName: 'Table',
-      refreshInterval: 5000
-    }, metricConfig);
+    _this.sensorConfig = Object.assign({
+        name: os.hostname()
+      },
+      sensorConfig
+    );
+
+    _this.metricConfig = Object.assign({
+        uid: uuid.v4(),
+        name: 'Custom',
+        tags: '',
+        rendererName: 'Table',
+        refreshInterval: 5000
+      },
+      metricConfig
+    );
   }
 
   getInfo() {
     const _this = this;
+
     return new Promise(function(resolve) {
       resolve({
         metricUid: _this.metricConfig.uid,
@@ -31,12 +38,16 @@ class CustomMetric {
   }
 
   getConfig() {
+    const _this = this;
+
     return new Promise(function(resolve) {
       resolve({});
     });
   }
 
   getData() {
+    const _this = this;
+
     return new Promise(function(resolve) {
       resolve({});
     });

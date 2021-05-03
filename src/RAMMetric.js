@@ -1,11 +1,13 @@
 const bytes = require('bytes');
-const si    = require('systeminformation');
+const si = require('systeminformation');
 
 const CustomMetric = require(__dirname + '/CustomMetric.js');
 
 class RAMMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
+    const _this = this;
+
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
 
@@ -37,13 +39,13 @@ class RAMMetric extends CustomMetric {
         config.datasets.push('Active');
         config.ranges = [];
         config.ranges.push({
-          value:     overload,
-          title:     `Overload (>${bytes(overload)})`,
+          value: overload,
+          title: `Overload (>${bytes(overload)})`,
           lineColor: 'chocolate',
         });
         config.ranges.push({
-          value:     critical,
-          title:     `Critical (>${bytes(critical)})`,
+          value: critical,
+          title: `Critical (>${bytes(critical)})`,
           lineColor: 'red',
         });
         resolve(config);
@@ -56,15 +58,15 @@ class RAMMetric extends CustomMetric {
 
     return new Promise(function(resolve, reject) {
       si.mem().then(function (stats) {
-        const rawTotal     = stats.total;
-        const rawActive    = stats.active;
+        const rawTotal = stats.total;
+        const rawActive = stats.active;
         const rawAvailable = stats.available;
-        const active       = rawActive/_this.multiplier;
-        const title        = `RAM`;
-        const subTitle     = `Available ${bytes(rawAvailable)}, Active ${bytes(rawActive)}, Total ${bytes(rawTotal)}`;
+        const active = rawActive/_this.multiplier;
+        const title = `RAM`;
+        const subTitle = `Available ${bytes(rawAvailable)}, Active ${bytes(rawActive)}, Total ${bytes(rawTotal)}`;
         const table = {
           header: [],
-          body:   [],
+          body: [],
         };
         table.body.push(['Available', bytes(rawAvailable)]);
         table.body.push(['Active', bytes(rawActive)]);
@@ -72,15 +74,28 @@ class RAMMetric extends CustomMetric {
         const points = [];
         points.push(active);
         const values = [];
-        values.push({ raw: rawAvailable, formatted: bytes(rawAvailable), label: 'Available'});
-        values.push({ raw: rawActive, threshold: active, formatted: bytes(rawActive), label: 'Active'});
-        values.push({ raw: rawTotal, formatted: bytes(rawTotal), label: 'Total'});
+        values.push({
+          raw: rawAvailable,
+          formatted: bytes(rawAvailable),
+          label: 'Available'
+        });
+        values.push({
+          raw: rawActive,
+          threshold: active,
+          formatted: bytes(rawActive),
+          label: 'Active'
+        });
+        values.push({
+          raw: rawTotal,
+          formatted: bytes(rawTotal),
+          label: 'Total'
+        });
         resolve({
-          title:     title,
-          subTitle:  subTitle,
-          values:    values,
-          points:    points,
-          table:     table,
+          title: title,
+          subTitle: subTitle,
+          values: values,
+          points: points,
+          table: table,
         });
       }, reject);
     });
