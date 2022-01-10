@@ -7,8 +7,6 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class MySQLMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
-    const _this = this;
-
     metricConfig.rendererName = metricConfig.rendererName || 'Table';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 60000;
     metricConfig.settings = Object.assign({

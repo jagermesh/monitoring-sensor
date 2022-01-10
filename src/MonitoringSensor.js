@@ -7,20 +7,18 @@ const Logger = require(__dirname + '/Logger.js');
 class MonitoringSensor {
 
   constructor(config, logger) {
-    const _this = this;
-
-    _this.sensorConfig = Object.assign({
+    this.sensorConfig = Object.assign({
         hubUrl: 'http://localhost:8082',
         name: os.hostname()
       },
       config
     );
 
-    _this.sensorUid = uuid.v4();
-    _this.sensorName = _this.sensorConfig.name;
-    _this.metrics = [];
+    this.sensorUid = uuid.v4();
+    this.sensorName = this.sensorConfig.name;
+    this.metrics = [];
 
-    _this.logger = (logger || new Logger('SNS'));
+    this.logger = (logger || new Logger('SNS'));
   }
 
   getInfo() {

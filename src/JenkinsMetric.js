@@ -6,8 +6,6 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class JenkinsMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
-    const _this = this;
-
     metricConfig.rendererName = metricConfig.rendererName || 'Table';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 5000;
 

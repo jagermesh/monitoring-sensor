@@ -4,15 +4,13 @@ const os = require('os');
 class CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
-    const _this = this;
-
-    _this.sensorConfig = Object.assign({
+    this.sensorConfig = Object.assign({
         name: os.hostname()
       },
       sensorConfig
     );
 
-    _this.metricConfig = Object.assign({
+    this.metricConfig = Object.assign({
         uid: uuid.v4(),
         name: 'Custom',
         tags: '',

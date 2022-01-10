@@ -6,8 +6,6 @@ const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 class HDDMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
-    const _this = this;
-
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 30000;
     metricConfig.settings = Object.assign({
@@ -19,15 +17,15 @@ class HDDMetric extends CustomMetric {
 
     super(sensorConfig, metricConfig);
 
-    _this.threshold = _this.metricConfig.settings.threshold;
-    _this.mounts = _this.metricConfig.settings.mounts;
-    _this.mountsList = [];
-    if (_this.mounts.length > 0) {
-      _this.mountsList = this.mounts.split(',').map(function(pathName) {
+    this.threshold = this.metricConfig.settings.threshold;
+    this.mounts = this.metricConfig.settings.mounts;
+    this.mountsList = [];
+    if (this.mounts.length > 0) {
+      this.mountsList = this.mounts.split(',').map(function(pathName) {
         return pathName.trim();
       });
     }
-    _this.realMounts = [];
+    this.realMounts = [];
   }
 
   getConfig() {

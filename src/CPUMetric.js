@@ -6,8 +6,6 @@ const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 class CPUMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
-    const _this = this;
-
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
     metricConfig.settings = Object.assign({
@@ -67,10 +65,10 @@ class CPUMetric extends CustomMetric {
 
     return new Promise(function(resolve, reject) {
       si.currentLoad().then(function(stats) {
-        const currentLoad = stats.currentload;
-        const currentLoadUser = stats.currentload_user;
-        const currentLoadSystem = stats.currentload_system;
-        const currentLoadIdle = stats.currentload_idle;
+        const currentLoad = stats.currentLoad;
+        const currentLoadUser = stats.currentLoadUser;
+        const currentLoadSystem = stats.currentLoadSystem;
+        const currentLoadIdle = stats.currentLoadIdle;
         const title = `CPU Load ${_this.cpus} CPUs`;
         const subTitle = `Overall ${currentLoad.toFixed(2)}%,  User ${currentLoadUser.toFixed(2)}%, System ${currentLoadSystem.toFixed(2)}%, Idle ${currentLoadIdle.toFixed(2)}%`;
         const points = [];
@@ -87,12 +85,12 @@ class CPUMetric extends CustomMetric {
             let avg = 0;
             let sum = 0;
             stats.map(function(stat) {
-              table.body.push([stat.name, `${stat.pcpu.toFixed(2)}%`, `${stat.pmem.toFixed(2)}%`]);
-              points.push(stat.pcpu);
-              if (stat.pcpu > max) {
-                max = stat.pcpu;
+              table.body.push([stat.name, `${stat.cpu.toFixed(2)}%`, `${stat.mem.toFixed(2)}%`]);
+              points.push(stat.cpu);
+              if (stat.cpu > max) {
+                max = stat.cpu;
               }
-              sum += stat.pcpu;
+              sum += stat.cpu;
             });
             if (stats.length > 0) {
               avg = sum / stats.length;

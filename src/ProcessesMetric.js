@@ -5,8 +5,6 @@ const CustomMetric = require(__dirname + '/CustomMetric.js');
 class ProcessesMetric extends CustomMetric {
 
   constructor(sensorConfig, metricConfig) {
-    const _this = this;
-
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 5000;
     metricConfig.settings = Object.assign({
