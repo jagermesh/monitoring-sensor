@@ -20,18 +20,18 @@ class RAMMetric extends CustomMetric {
     const _this = this;
 
     return new Promise(function(resolve, reject) {
-      si.mem().then(function (stats) {
+      si.mem().then(function(stats) {
         let tmp = stats.total;
         _this.multiplier = 1;
-        while(tmp > 1024) {
-          tmp = tmp/1024;
+        while (tmp > 1024) {
+          tmp = tmp / 1024;
           _this.multiplier = _this.multiplier * 1024;
         }
         let rawTotal = stats.total;
-        let total = rawTotal/_this.multiplier;
+        let total = rawTotal / _this.multiplier;
         const overload = total * 0.75;
         const critical = total * 0.90;
-        const config = Object.create({ });
+        const config = Object.create({});
         config.lineColor = 'green';
         config.suggestedMax = total;
         config.min = 0;
@@ -57,11 +57,11 @@ class RAMMetric extends CustomMetric {
     const _this = this;
 
     return new Promise(function(resolve, reject) {
-      si.mem().then(function (stats) {
+      si.mem().then(function(stats) {
         const rawTotal = stats.total;
         const rawActive = stats.active;
         const rawAvailable = stats.available;
-        const active = rawActive/_this.multiplier;
+        const active = rawActive / _this.multiplier;
         const title = `RAM`;
         const subTitle = `Available ${bytes(rawAvailable)}, Active ${bytes(rawActive)}, Total ${bytes(rawTotal)}`;
         const table = {

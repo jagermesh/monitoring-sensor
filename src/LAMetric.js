@@ -21,7 +21,7 @@ class LAMetric extends CustomMetric {
     const _this = this;
 
     return new Promise(function(resolve) {
-      const config = Object.create({ });
+      const config = Object.create({});
       config.lineColor = 'green';
       config.suggestedMax = _this.overload;
       config.min = 0;
@@ -69,10 +69,10 @@ class LAMetric extends CustomMetric {
         header: [],
         body: [],
       };
-      table.body.push(['LA 1 Min',  la[0].toFixed(2)]);
-      table.body.push(['LA 5 Min',  la[1].toFixed(2)]);
+      table.body.push(['LA 1 Min', la[0].toFixed(2)]);
+      table.body.push(['LA 5 Min', la[1].toFixed(2)]);
       table.body.push(['LA 15 Min', la[2].toFixed(2)]);
-      const points   = [];
+      const points = [];
       points.push(la[0]);
       points.push(la[1]);
       points.push(la[2]);

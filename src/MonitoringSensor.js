@@ -35,7 +35,9 @@ class MonitoringSensor {
   start() {
     const _this = this;
 
-    _this.logger.log('Starting sensor', { sensorUid: _this.sensorUid });
+    _this.logger.log('Starting sensor', {
+      sensorUid: _this.sensorUid
+    });
 
     function gatherAndSendData(metric, metricDescriptor) {
       try {

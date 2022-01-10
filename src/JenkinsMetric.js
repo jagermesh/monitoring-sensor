@@ -22,7 +22,7 @@ class JenkinsMetric extends CustomMetric {
     const _this = this;
 
     return new Promise(function(resolve) {
-      const config = Object.create({ });
+      const config = Object.create({});
       config.lineColor = 'green';
       config.datasets = [];
       config.datasets.push('Total');
@@ -49,7 +49,7 @@ class JenkinsMetric extends CustomMetric {
   formatStatusName(name) {
     const _this = this;
 
-    switch(name) {
+    switch (name) {
       case 'SUCCESS':
         return `<span style="color:green;">Success</span>`;
       case 'FAILURE':
@@ -151,7 +151,7 @@ class JenkinsMetric extends CustomMetric {
           'Status page',
         ];
         allBuilds.map(function(build) {
-          let duration = build.duration/1000/60;
+          let duration = build.duration / 1000 / 60;
           table.body.push([
             build.number,
             _this.formatStatusName(build.status),

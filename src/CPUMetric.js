@@ -10,11 +10,13 @@ class CPUMetric extends CustomMetric {
 
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
-    metricConfig.settings = Object.assign({ processes: '' }, metricConfig.settings);
+    metricConfig.settings = Object.assign({
+      processes: ''
+    }, metricConfig.settings);
 
     super(sensorConfig, metricConfig);
 
-    this.processes  = this.metricConfig.settings.processes;
+    this.processes = this.metricConfig.settings.processes;
     this.processesList = [];
     if (this.processes.length > 0) {
       this.processesList = this.processes.split(',').map(function(processName) {
@@ -30,7 +32,7 @@ class CPUMetric extends CustomMetric {
     return new Promise(function(resolve) {
       const overload = 75;
       const critical = 90;
-      const config = Object.create({ });
+      const config = Object.create({});
       config.lineColor = 'green';
       config.suggestedMax = 100;
       config.min = 0;
@@ -64,7 +66,7 @@ class CPUMetric extends CustomMetric {
     const _this = this;
 
     return new Promise(function(resolve, reject) {
-      si.currentLoad().then(function (stats) {
+      si.currentLoad().then(function(stats) {
         const currentLoad = stats.currentload;
         const currentLoadUser = stats.currentload_user;
         const currentLoadSystem = stats.currentload_system;
@@ -74,14 +76,17 @@ class CPUMetric extends CustomMetric {
         const points = [];
         points.push(currentLoad);
         const values = [];
-        const table = { header: [], body: [] };
+        const table = {
+          header: [],
+          body: []
+        };
         if (_this.processesList.length > 0) {
           table.header = ['Process', 'CPU', 'Memory'];
-          si.services(_this.processes).then(function (stats) {
+          si.services(_this.processes).then(function(stats) {
             let max = 0;
             let avg = 0;
             let sum = 0;
-            stats.map(function (stat) {
+            stats.map(function(stat) {
               table.body.push([stat.name, `${stat.pcpu.toFixed(2)}%`, `${stat.pmem.toFixed(2)}%`]);
               points.push(stat.pcpu);
               if (stat.pcpu > max) {
@@ -90,7 +95,7 @@ class CPUMetric extends CustomMetric {
               sum += stat.pcpu;
             });
             if (stats.length > 0) {
-              avg = sum/stats.length;
+              avg = sum / stats.length;
             }
             values.push({
               raw: avg,
@@ -104,7 +109,7 @@ class CPUMetric extends CustomMetric {
               label: 'Max'
             });
             resolve({
-              title:  title,
+              title: title,
               subTitle: subTitle,
               values: values,
               points: points,

@@ -11,7 +11,9 @@ class MySQLMetric extends CustomMetric {
 
     metricConfig.rendererName = metricConfig.rendererName || 'Table';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 60000;
-    metricConfig.settings = Object.assign({ description: 'MySQL Query' }, metricConfig.settings);
+    metricConfig.settings = Object.assign({
+      description: 'MySQL Query'
+    }, metricConfig.settings);
 
     super(sensorConfig, metricConfig);
 
@@ -40,9 +42,9 @@ class MySQLMetric extends CustomMetric {
     const _this = this;
 
     return new Promise(function(resolve) {
-      const config = Object.create({ });
+      const config = Object.create({});
       config.lineColor = 'green';
-      config.datasets = (_this.metricConfig.settings.datasets ? _this.metricConfig.settings.datasets : [ 'Count' ]);
+      config.datasets = (_this.metricConfig.settings.datasets ? _this.metricConfig.settings.datasets : ['Count']);
       resolve(config);
     });
   }
@@ -62,14 +64,14 @@ class MySQLMetric extends CustomMetric {
           reject(error.sqlMessage);
           return;
         }
-        connection.query(_this.query(_this.queryVariables), function (error, results, fields) {
+        connection.query(_this.query(_this.queryVariables), function(error, results, fields) {
           connection.release();
           if (error) {
             reject(error.sqlMessage);
             return;
           }
           _this.updateQueryVariables();
-          const filteredResults = results.filter(function (result) {
+          const filteredResults = results.filter(function(result) {
             return _this.filterRow(result);
           });
 
@@ -98,7 +100,7 @@ class MySQLMetric extends CustomMetric {
             return field.name;
           });
           if (filteredResults.length > 0) {
-            for(let i = 0; i < filteredResults.length; i++) {
+            for (let i = 0; i < filteredResults.length; i++) {
               let row = [];
               table.header.map(function(fieldName) {
                 row.push(filteredResults[i][fieldName]);

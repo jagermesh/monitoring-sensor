@@ -9,11 +9,13 @@ class ProcessesMetric extends CustomMetric {
 
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 5000;
-    metricConfig.settings = Object.assign({ processes: '' }, metricConfig.settings);
+    metricConfig.settings = Object.assign({
+      processes: ''
+    }, metricConfig.settings);
 
     super(sensorConfig, metricConfig);
 
-    this.processes  = this.metricConfig.settings.processes;
+    this.processes = this.metricConfig.settings.processes;
     this.processesList = [];
     if (this.processes.length > 0) {
       this.processesList = this.processes.split(',').map(function(processName) {
@@ -27,7 +29,7 @@ class ProcessesMetric extends CustomMetric {
     const _this = this;
 
     return new Promise(function(resolve) {
-      const config = Object.create({ });
+      const config = Object.create({});
       config.lineColor = 'green';
       config.settings = _this.processes;
       config.datasets = [];
@@ -66,7 +68,7 @@ class ProcessesMetric extends CustomMetric {
         }
         const points = [];
         points.push(foundProcesses.length);
-        for(let processName in processStat) {
+        for (let processName in processStat) {
           points.push(processStat[processName]);
         }
         const table = {
@@ -81,7 +83,9 @@ class ProcessesMetric extends CustomMetric {
           table.body.push(row);
         });
         const values = [];
-        values.push({ raw: foundProcesses.length });
+        values.push({
+          raw: foundProcesses.length
+        });
         resolve({
           title: title,
           subTitle: subTitle,

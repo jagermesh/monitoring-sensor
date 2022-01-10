@@ -10,7 +10,9 @@ class SensorHubConnector extends EventEmitter {
 
     _this.hubUrl = hubUrl || 'http://localhost:8082';
 
-    _this.connection = socketClient.connect(_this.hubUrl, { reconnect: true });
+    _this.connection = socketClient.connect(_this.hubUrl, {
+      reconnect: true
+    });
 
     _this.connection.on('connect', function() {
       _this.emit('connect');
@@ -31,7 +33,7 @@ class SensorHubConnector extends EventEmitter {
     if (_this.connection) {
       if (_this.connection.connected) {
         let message = {
-          metricUid:  metricUid,
+          metricUid: metricUid,
           metricData: metricData,
         };
         _this.connection.emit('metricData', message);

@@ -19,8 +19,8 @@ class HDDMetric extends CustomMetric {
 
     super(sensorConfig, metricConfig);
 
-    _this.threshold  = _this.metricConfig.settings.threshold;
-    _this.mounts  = _this.metricConfig.settings.mounts;
+    _this.threshold = _this.metricConfig.settings.threshold;
+    _this.mounts = _this.metricConfig.settings.mounts;
     _this.mountsList = [];
     if (_this.mounts.length > 0) {
       _this.mountsList = this.mounts.split(',').map(function(pathName) {
@@ -42,7 +42,7 @@ class HDDMetric extends CustomMetric {
           return device.mount;
         });
         si.fsSize().then(function(data) {
-          const config = Object.create({ });
+          const config = Object.create({});
           config.lineColor = 'green';
           config.max = 100;
           config.min = 0;
@@ -82,11 +82,11 @@ class HDDMetric extends CustomMetric {
           totalUsed += device.used;
           totalSize += device.size;
         });
-        const usagePercent = totalUsed*100/totalSize;
+        const usagePercent = totalUsed * 100 / totalSize;
         const points = [];
         const table = {
           header: ['mount', 'size', 'used', 'use', 'type', 'fs'],
-          body:   [],
+          body: [],
         };
         devices.map(function(device) {
           points.push(device.use);
