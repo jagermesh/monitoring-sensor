@@ -3,7 +3,6 @@ const si = require('systeminformation');
 const CustomMetric = require(__dirname + '/CustomMetric.js');
 
 class ProcessesMetric extends CustomMetric {
-
   constructor(sensorConfig, metricConfig) {
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 5000;
@@ -94,7 +93,6 @@ class ProcessesMetric extends CustomMetric {
       }, reject);
     });
   }
-
 }
 
 module.exports = ProcessesMetric;

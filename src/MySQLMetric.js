@@ -5,7 +5,6 @@ const moment = require('moment');
 const CustomMetric = require(__dirname + '/CustomMetric.js');
 
 class MySQLMetric extends CustomMetric {
-
   constructor(sensorConfig, metricConfig) {
     metricConfig.rendererName = metricConfig.rendererName || 'Table';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 60000;
@@ -29,8 +28,6 @@ class MySQLMetric extends CustomMetric {
   }
 
   updateQueryVariables() {
-    const _this = this;
-
     this.queryVariables = {
       lastRunAt: moment().format('YYYY-MM-DD HH:mm:ss')
     };
@@ -48,8 +45,6 @@ class MySQLMetric extends CustomMetric {
   }
 
   filterRow() {
-    const _this = this;
-
     return true;
   }
 
@@ -117,7 +112,6 @@ class MySQLMetric extends CustomMetric {
       });
     });
   }
-
 }
 
 module.exports = MySQLMetric;

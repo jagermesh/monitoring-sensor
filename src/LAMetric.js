@@ -3,7 +3,6 @@ const os = require('os');
 const CustomMetric = require(__dirname + '/CustomMetric.js');
 
 class LAMetric extends CustomMetric {
-
   constructor(sensorConfig, metricConfig) {
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
@@ -43,8 +42,6 @@ class LAMetric extends CustomMetric {
   }
 
   writeValue(value) {
-    const _this = this;
-
     let message = '<b';
     if (value > this.overload) {
       message += ' style="color:red;"';
@@ -102,7 +99,6 @@ class LAMetric extends CustomMetric {
       });
     });
   }
-
 }
 
 module.exports = LAMetric;

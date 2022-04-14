@@ -4,15 +4,14 @@ const si = require('systeminformation');
 const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 
 class HDDMetric extends CustomMetric {
-
   constructor(sensorConfig, metricConfig) {
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 30000;
     metricConfig.settings = Object.assign({
-        mounts: '',
-        threshold: 90
-      },
-      metricConfig.settings
+      mounts: '',
+      threshold: 90
+    },
+    metricConfig.settings
     );
 
     super(sensorConfig, metricConfig);
@@ -126,7 +125,6 @@ class HDDMetric extends CustomMetric {
       }, reject);
     });
   }
-
 }
 
 module.exports = HDDMetric;

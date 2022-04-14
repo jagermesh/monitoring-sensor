@@ -5,13 +5,12 @@ const SensorHubConnector = require(__dirname + '/SensorHubConnector.js');
 const Logger = require(__dirname + '/Logger.js');
 
 class MonitoringSensor {
-
   constructor(config, logger) {
     this.sensorConfig = Object.assign({
-        hubUrl: 'http://localhost:8082',
-        name: os.hostname()
-      },
-      config
+      hubUrl: 'http://localhost:8082',
+      name: os.hostname()
+    },
+    config
     );
 
     this.sensorUid = uuid.v4();
@@ -22,8 +21,6 @@ class MonitoringSensor {
   }
 
   getInfo() {
-    const _this = this;
-
     return {
       sensorUid: this.sensorUid,
       sensorName: this.sensorName,
@@ -97,7 +94,6 @@ class MonitoringSensor {
       _this.logger.log(`Disconnected from hub at ${_this.sensorConfig.hubUrl}`);
     });
   }
-
 }
 
 module.exports = MonitoringSensor;

@@ -4,7 +4,6 @@ const axios = require('axios');
 const CustomMetric = require(__dirname + '/CustomMetric.js');
 
 class JenkinsMetric extends CustomMetric {
-
   constructor(sensorConfig, metricConfig) {
     metricConfig.rendererName = metricConfig.rendererName || 'Table';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 5000;
@@ -17,8 +16,6 @@ class JenkinsMetric extends CustomMetric {
   }
 
   getConfig() {
-    const _this = this;
-
     return new Promise(function(resolve) {
       const config = Object.create({});
       config.lineColor = 'green';
@@ -29,8 +26,6 @@ class JenkinsMetric extends CustomMetric {
   }
 
   formatDate(d) {
-    const _this = this;
-
     let result = '';
     let m = moment(d);
     if (m.isSame(new Date(), 'day')) {
@@ -45,17 +40,15 @@ class JenkinsMetric extends CustomMetric {
   }
 
   formatStatusName(name) {
-    const _this = this;
-
     switch (name) {
-      case 'SUCCESS':
-        return `<span style="color:green;">Success</span>`;
-      case 'FAILURE':
-        return `<span style="color:red;">Failed</span>`;
-      case 'ABORTED':
-        return `<span style="color:orange;">Cancelled</span>`;
-      default:
-        return `<span style="color:white;">${name}</span>`;
+    case 'SUCCESS':
+      return `<span style="color:green;">Success</span>`;
+    case 'FAILURE':
+      return `<span style="color:red;">Failed</span>`;
+    case 'ABORTED':
+      return `<span style="color:orange;">Cancelled</span>`;
+    default:
+      return `<span style="color:white;">${name}</span>`;
     }
   }
 
@@ -172,7 +165,6 @@ class JenkinsMetric extends CustomMetric {
       }, reject);
     });
   }
-
 }
 
 module.exports = JenkinsMetric;

@@ -2,7 +2,6 @@ const socketClient = require('socket.io-client');
 const EventEmitter = require('events');
 
 class SensorHubConnector extends EventEmitter {
-
   constructor(hubUrl) {
     super();
 
@@ -50,7 +49,6 @@ class SensorHubConnector extends EventEmitter {
       }
     }
   }
-
 }
 
 module.exports = SensorHubConnector;

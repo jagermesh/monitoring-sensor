@@ -4,7 +4,6 @@ const si = require('systeminformation');
 const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 
 class CPUMetric extends CustomMetric {
-
   constructor(sensorConfig, metricConfig) {
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
@@ -137,7 +136,6 @@ class CPUMetric extends CustomMetric {
       }, reject);
     });
   }
-
 }
 
 module.exports = CPUMetric;
