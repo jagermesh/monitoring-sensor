@@ -26,5 +26,5 @@ module.exports = {
   }, {
     name: 'Processes',
     refreshInterval: 5000,
-  }, ],
+  } ],
 };

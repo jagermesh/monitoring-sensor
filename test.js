@@ -1,5 +1,5 @@
 const {
-  MonitoringSensor
+  MonitoringSensor,
 } = require(`${__dirname}/index.js`);
 
 const config = {
@@ -9,46 +9,49 @@ const config = {
       // CPU
       {
         name: 'CPU',
-        rendererName: 'Chart,Value,Table,Gauge'
-      }, {
+        rendererName: 'Chart,Value,Table,Gauge',
+      },
+      {
         name: 'CPU',
         rendererName: 'Chart,Value,Table,Gauge',
         settings: {
-          processes: 'php,node'
-        }
+          processes: 'php,node',
+        },
       },
       // RAM
       {
         name: 'RAM',
-        rendererName: 'Chart,Value,Table,Gauge'
+        rendererName: 'Chart,Value,Table,Gauge',
       },
       // LA
       {
         name: 'LA',
-        rendererName: 'Chart,Value,Table,Gauge'
+        rendererName: 'Chart,Value,Table,Gauge',
       },
       // Processes
       {
         name: 'Processes',
-        rendererName: 'Chart,Value,Table'
-      }, {
+        rendererName: 'Chart,Value,Table',
+      },
+      {
         name: 'Processes',
         rendererName: 'Chart,Value,Table',
         settings: {
-          processes: 'php,node'
-        }
+          processes: 'php,node',
+        },
       },
       // HDD
       {
         name: 'HDD',
-        rendererName: 'Chart,Value,Table'
-      }, {
+        rendererName: 'Chart,Value,Table',
+      },
+      {
         name: 'HDD',
         rendererName: 'Chart,Value,Table',
         settings: {
           mounts: '/System/Volumes/Data',
-          threshold: 80
-        }
+          threshold: 80,
+        },
       },
       // Jenkins
       {
@@ -58,7 +61,7 @@ const config = {
           apiUrl: 'http://localhost:8080/job/project/',
           username: 'admin',
           password: '11acff4a9f050afc3787c908c0812c3c8d',
-        }
+        },
       },
       // MySQLProcesses
       {
@@ -67,8 +70,8 @@ const config = {
         settings: {
           host: 'localhost',
           user: 'root',
-          password: ''
-        }
+          password: '12345',
+        },
       },
       // MySQL
       {
@@ -77,14 +80,14 @@ const config = {
         settings: {
           host: 'localhost',
           user: 'root',
-          password: '',
+          password: '12345',
           database: '',
           sql: 'SHOW PROCESSLIST',
-          description: 'MySQL Process List'
-        }
+          description: 'MySQL Process List',
+        },
       },
-    ]
-  }
+    ],
+  },
 };
 
 const sensor = new MonitoringSensor(config.sensor);

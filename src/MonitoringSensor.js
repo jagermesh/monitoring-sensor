@@ -8,14 +8,15 @@ class MonitoringSensor {
   constructor(config, logger) {
     this.sensorConfig = Object.assign({
       hubUrl: 'http://localhost:8082',
-      name: os.hostname()
+      name: os.hostname(),
     },
-    config
+    config,
     );
 
     this.sensorUid = uuid.v4();
     this.sensorName = this.sensorConfig.name;
     this.metrics = [];
+    this.sensorHubConnector = null;
 
     this.logger = (logger || new Logger('SNS'));
   }
@@ -27,71 +28,70 @@ class MonitoringSensor {
     };
   }
 
-  start() {
-    const _this = this;
+  gatherAndSendData(metric, metricDescriptor) {
+    try {
+      metric.getData().then((metricData) => {
+        this.sensorHubConnector.sendData(metricDescriptor.metricInfo.metricUid, metricData);
+      }).catch((error) => {
+        this.logger.log(error, metricDescriptor.metricInfo, true);
+      });
+    } catch (error) {
+      this.logger.log(error, metricDescriptor.metricInfo, true);
+    }
+  }
 
-    _this.logger.log('Starting sensor', {
-      sensorUid: _this.sensorUid
+  registerMetric(metricDescriptor) {
+    this.logger.log('Registering metric', metricDescriptor);
+    this.sensorHubConnector.registerMetric(metricDescriptor);
+  }
+
+  start() {
+    this.logger.log('Starting sensor', {
+      sensorUid: this.sensorUid,
     });
 
-    function gatherAndSendData(metric, metricDescriptor) {
-      try {
-        metric.getData().then(function(metricData) {
-          sensorHubConnector.sendData(metricDescriptor.metricInfo.metricUid, metricData);
-        }).catch(function(error) {
-          _this.logger.log(error, metricDescriptor.metricInfo, true);
-        });
-      } catch (error) {
-        _this.logger.log(error, metricDescriptor.metricInfo, true);
-      }
-    }
 
-    function registerMetric(metricDescriptor) {
-      _this.logger.log('Registering metric', metricDescriptor);
-      sensorHubConnector.registerMetric(metricDescriptor);
-    }
-
-    _this.sensorConfig.metrics.map(async function(metricConfig) {
+    this.sensorConfig.metrics.map(async (metricConfig) => {
       let Metric = require(`${__dirname}/${metricConfig.name}Metric.js`);
-      let metric = new Metric(_this.sensorConfig, metricConfig);
+      let metric = new Metric(this.sensorConfig, metricConfig);
       let metricDescriptor = {
-        sensorInfo: _this.getInfo(),
+        sensorInfo: this.getInfo(),
         metricInfo: await metric.getInfo(),
         metricConfig: await metric.getConfig(),
       };
-      _this.metrics.push({
+      this.metrics.push({
         metric: metric,
         metricDescriptor: metricDescriptor,
       });
-      _this.logger.log('Metric started', metricDescriptor);
-      registerMetric(metricDescriptor);
-      setInterval(function() {
-        gatherAndSendData(metric, metricDescriptor);
+      this.logger.log('Metric started', metricDescriptor);
+      this.registerMetric(metricDescriptor);
+      setInterval(() => {
+        this.gatherAndSendData(metric, metricDescriptor);
       }, metricDescriptor.metricInfo.metricRefreshInterval);
     });
 
-    _this.logger.log(`Connecting to hub at ${_this.sensorConfig.hubUrl}`);
+    this.logger.log(`Connecting to hub at ${this.sensorConfig.hubUrl}`);
 
-    const sensorHubConnector = new SensorHubConnector(_this.sensorConfig.hubUrl);
+    this.sensorHubConnector = new SensorHubConnector(this.sensorConfig.hubUrl);
 
-    sensorHubConnector.on('connect', function() {
-      _this.logger.log(`Connected to hub at ${_this.sensorConfig.hubUrl}`);
-      _this.metrics.map(function(metric) {
-        registerMetric(metric.metricDescriptor);
+    this.sensorHubConnector.on('connect', () => {
+      this.logger.log(`Connected to hub at ${this.sensorConfig.hubUrl}`);
+      this.metrics.map((metric) => {
+        this.registerMetric(metric.metricDescriptor);
       });
     });
 
-    sensorHubConnector.on('metricRegistered', function(data) {
-      _this.metrics.map(function(metric) {
+    this.sensorHubConnector.on('metricRegistered', (data) => {
+      this.metrics.map((metric) => {
         if (metric.metricDescriptor.metricInfo.metricUid === data.metricInfo.metricUid) {
-          _this.logger.log('Metric registration acknowledged', metric.metricDescriptor);
-          gatherAndSendData(metric.metric, metric.metricDescriptor);
+          this.logger.log('Metric registration acknowledged', metric.metricDescriptor);
+          this.gatherAndSendData(metric.metric, metric.metricDescriptor);
         }
       });
     });
 
-    sensorHubConnector.on('disconnect', function() {
-      _this.logger.log(`Disconnected from hub at ${_this.sensorConfig.hubUrl}`);
+    this.sensorHubConnector.on('disconnect', () => {
+      this.logger.log(`Disconnected from hub at ${this.sensorConfig.hubUrl}`);
     });
   }
 }

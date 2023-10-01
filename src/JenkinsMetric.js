@@ -16,7 +16,7 @@ class JenkinsMetric extends CustomMetric {
   }
 
   getConfig() {
-    return new Promise(function(resolve) {
+    return new Promise((resolve) => {
       const config = Object.create({});
       config.lineColor = 'green';
       config.datasets = [];
@@ -30,8 +30,7 @@ class JenkinsMetric extends CustomMetric {
     let m = moment(d);
     if (m.isSame(new Date(), 'day')) {
       result = m.format('LT');
-    } else
-    if (m.isSame(new Date(), 'year')) {
+    } else if (m.isSame(new Date(), 'year')) {
       result = m.format('MMM D, LT');
     } else {
       result = m.format('L LT');
@@ -41,70 +40,68 @@ class JenkinsMetric extends CustomMetric {
 
   formatStatusName(name) {
     switch (name) {
-    case 'SUCCESS':
-      return `<span style="color:green;">Success</span>`;
-    case 'FAILURE':
-      return `<span style="color:red;">Failed</span>`;
-    case 'ABORTED':
-      return `<span style="color:orange;">Cancelled</span>`;
-    default:
-      return `<span style="color:white;">${name}</span>`;
+      case 'SUCCESS':
+        return '<span style="color:green;">Success</span>';
+      case 'FAILURE':
+        return '<span style="color:red;">Failed</span>';
+      case 'ABORTED':
+        return '<span style="color:orange;">Cancelled</span>';
+      default:
+        return `<span style="color:white;">${name}</span>`;
     }
   }
 
   getData() {
-    const _this = this;
-
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       const params = {};
-      if (_this.metricConfig.settings.username || _this.metricConfig.settings.password) {
+      if (this.metricConfig.settings.username || this.metricConfig.settings.password) {
         params.auth = {
-          username: _this.metricConfig.settings.username,
-          password: _this.metricConfig.settings.password,
+          username: this.metricConfig.settings.username,
+          password: this.metricConfig.settings.password,
         };
       }
-      axios.get(_this.apiUrl + 'api/json', params).then(async function(response) {
+      axios.get(this.apiUrl + 'api/json', params).then(async (response) => {
         let builds = response.data.builds;
         let allBuilds = [];
         let missingBuilds = [];
 
-        builds.map(function(build) {
-          if (_this.cache.has(build.number)) {
-            allBuilds.push(_this.cache.get(build.number));
+        builds.map((build) => {
+          if (this.cache.has(build.number)) {
+            allBuilds.push(this.cache.get(build.number));
           } else {
             missingBuilds.push(build);
           }
         });
 
-        await missingBuilds.reduce(function(promise, build) {
-          return promise.then(function() {
-            return axios.get(`${build.url}api/json`, params).then(function(response) {
+        await missingBuilds.reduce((promise, build) => {
+          return promise.then(() => {
+            return axios.get(`${build.url}api/json`, params).then((response) => {
               let build = response.data;
               build.building = (build.building || !build.result);
               if (build.building) {
                 build.status = 'RUNNING';
               } else {
                 build.status = build.result;
-                _this.cache.set(build.number, build);
+                this.cache.set(build.number, build);
               }
               allBuilds.push(build);
             });
           });
         }, Promise.resolve());
 
-        allBuilds.sort(function compare(a, b) {
+        allBuilds.sort((a, b) => {
           return (a.number > b.number ? -1 : (a.number < b.number ? 1 : 0));
         });
 
-        let activeBuilds = allBuilds.filter(function(build) {
+        let activeBuilds = allBuilds.filter((build) => {
           return build.building;
         });
 
-        let successBuilds = allBuilds.filter(function(build) {
+        let successBuilds = allBuilds.filter((build) => {
           return (!build.building && (build.result === 'SUCCESS'));
         });
 
-        let failedBuilds = allBuilds.filter(function(build) {
+        let failedBuilds = allBuilds.filter((build) => {
           return (!build.building && (build.result !== 'SUCCESS'));
         });
 
@@ -115,21 +112,21 @@ class JenkinsMetric extends CustomMetric {
         const values = [];
         values.push({
           raw: activeBuilds.length,
-          label: 'Running'
+          label: 'Running',
         });
         values.push({
           raw: successBuilds.length,
           formatted: `<span style="color:green;">${successBuilds.length}</span>`,
-          label: 'Success'
+          label: 'Success',
         });
         values.push({
           raw: failedBuilds.length,
           formatted: `<span style="color:red;">${failedBuilds.length}</span>`,
-          label: 'Failed'
+          label: 'Failed',
         });
         const table = {
           header: [],
-          body: []
+          body: [],
         };
         table.header = [
           'Number',
@@ -141,17 +138,17 @@ class JenkinsMetric extends CustomMetric {
           'Console output',
           'Status page',
         ];
-        allBuilds.map(function(build) {
+        allBuilds.map((build) => {
           let duration = build.duration / 1000 / 60;
           table.body.push([
             build.number,
-            _this.formatStatusName(build.status),
+            this.formatStatusName(build.status),
             build.displayName,
-            _this.formatDate(build.timestamp),
-            (build.building ? _this.formatDate(build.timestamp + build.estimatedDuration) : ''),
+            this.formatDate(build.timestamp),
+            (build.building ? this.formatDate(build.timestamp + build.estimatedDuration) : ''),
             (build.building ? '' : `${duration.toFixed()} Min`),
-            `<a href="${_this.apiUrl}${build.id}/console" target="_blank">Console output</a>`,
-            `<a href="${_this.apiUrl}${build.id}" target="_blank">Status page</a>`,
+            `<a href="${this.apiUrl}${build.id}/console" target="_blank">Console output</a>`,
+            `<a href="${this.apiUrl}${build.id}" target="_blank">Status page</a>`,
           ]);
         });
 

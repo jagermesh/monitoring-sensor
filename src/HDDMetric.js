@@ -9,9 +9,9 @@ class HDDMetric extends CustomMetric {
     metricConfig.refreshInterval = metricConfig.refreshInterval || 30000;
     metricConfig.settings = Object.assign({
       mounts: '',
-      threshold: 90
+      threshold: 90,
     },
-    metricConfig.settings
+    metricConfig.settings,
     );
 
     super(sensorConfig, metricConfig);
@@ -20,7 +20,7 @@ class HDDMetric extends CustomMetric {
     this.mounts = this.metricConfig.settings.mounts;
     this.mountsList = [];
     if (this.mounts.length > 0) {
-      this.mountsList = this.mounts.split(',').map(function(pathName) {
+      this.mountsList = this.mounts.split(',').map((pathName) => {
         return pathName.trim();
       });
     }
@@ -28,34 +28,38 @@ class HDDMetric extends CustomMetric {
   }
 
   getConfig() {
-    const _this = this;
-
-    return new Promise(function(resolve, reject) {
-      si.blockDevices().then(function(data) {
-        _this.realMounts = data.filter(function(device) {
+    return new Promise((resolve, reject) => {
+      si.blockDevices().then((data) => {
+        this.realMounts = data.filter((device) => {
           return !device.removable && (device.mount.length > 0);
         });
-        _this.realMounts = _this.realMounts.map(function(device) {
+        this.realMounts = this.realMounts.map((device) => {
           return device.mount;
         });
-        si.fsSize().then(function(data) {
+        si.fsSize().then((data) => {
           const config = Object.create({});
           config.lineColor = 'green';
           config.max = 100;
           config.min = 0;
-          config.settings = _this.mounts;
+          config.settings = this.mounts;
           config.datasets = [];
-          let devices = data.filter(function(device) {
-            return ((_this.realMounts.indexOf(device.mount) !== -1) && ((_this.mountsList.length === 0) || (_this.mountsList.indexOf(device.mount) !== -1)));
+          let devices = data.filter((device) => {
+            return (
+              (this.realMounts.indexOf(device.mount) !== -1) &&
+              (
+                (this.mountsList.length === 0) ||
+                (this.mountsList.indexOf(device.mount) !== -1)
+              )
+            );
           });
-          devices.map(function(device) {
+          devices.map((device) => {
             config.datasets.push(device.mount);
           });
-          if (_this.threshold) {
+          if (this.threshold) {
             config.ranges = [];
             config.ranges.push({
-              value: _this.threshold,
-              title: `Critical (>${_this.threshold.toFixed(2)})`,
+              value: this.threshold,
+              title: `Critical (>${this.threshold.toFixed(2)})`,
               lineColor: 'red',
             });
           }
@@ -66,16 +70,20 @@ class HDDMetric extends CustomMetric {
   }
 
   getData() {
-    const _this = this;
-
-    return new Promise(function(resolve, reject) {
-      si.fsSize().then(function(data) {
-        let devices = data.filter(function(device) {
-          return ((_this.realMounts.indexOf(device.mount) !== -1) && ((_this.mountsList.length === 0) || (_this.mountsList.indexOf(device.mount) !== -1)));
+    return new Promise((resolve, reject) => {
+      si.fsSize().then((data) => {
+        let devices = data.filter((device) => {
+          return (
+            (this.realMounts.indexOf(device.mount) !== -1) &&
+            (
+              (this.mountsList.length === 0) ||
+              (this.mountsList.indexOf(device.mount) !== -1)
+            )
+          );
         });
         let totalUsed = 0;
         let totalSize = 0;
-        devices.map(function(device) {
+        devices.map((device) => {
           totalUsed += device.used;
           totalSize += device.size;
         });
@@ -85,7 +93,7 @@ class HDDMetric extends CustomMetric {
           header: ['mount', 'size', 'used', 'use', 'type', 'fs'],
           body: [],
         };
-        devices.map(function(device) {
+        devices.map((device) => {
           points.push(device.use);
           table.body.push([
             device.mount,
@@ -93,7 +101,7 @@ class HDDMetric extends CustomMetric {
             bytes(device.used),
             `${device.use}%`,
             device.type,
-            device.fs
+            device.fs,
           ]);
         });
         const values = [];
@@ -101,19 +109,19 @@ class HDDMetric extends CustomMetric {
           raw: usagePercent,
           threshold: usagePercent,
           formatted: `${usagePercent.toFixed(2)}%`,
-          label: 'Used, %'
+          label: 'Used, %',
         });
         values.push({
           raw: totalUsed,
           formatted: bytes(totalUsed),
-          label: 'Used, size'
+          label: 'Used, size',
         });
         values.push({
           raw: totalSize,
           formatted: bytes(totalSize),
-          label: 'Total, size'
+          label: 'Total, size',
         });
-        const title = `HDD`;
+        const title = 'HDD';
         const subTitle = `Total ${bytes(totalSize)}, Used ${bytes(totalUsed)} (${usagePercent.toFixed(2)}%)`;
         resolve({
           title: title,

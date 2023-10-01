@@ -7,9 +7,9 @@ class MySQLProcessesMetric extends MySQLMetric {
     metricConfig.settings = Object.assign({
       sql: 'SHOW FULL PROCESSLIST',
       description: 'MySQL Processes',
-      fields: ['Id', 'User', 'Host', 'db', 'Command', 'Time', 'State', 'Progress', 'Info']
+      fields: ['Id', 'User', 'Host', 'db', 'Command', 'Time', 'State', 'Progress', 'Info'],
     },
-    metricConfig.settings
+    metricConfig.settings,
     );
 
     super(sensorConfig, metricConfig);

@@ -9,7 +9,7 @@ class MySQLMetric extends CustomMetric {
     metricConfig.rendererName = metricConfig.rendererName || 'Table';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 60000;
     metricConfig.settings = Object.assign({
-      description: 'MySQL Query'
+      description: 'MySQL Query',
     }, metricConfig.settings);
 
     super(sensorConfig, metricConfig);
@@ -29,17 +29,15 @@ class MySQLMetric extends CustomMetric {
 
   updateQueryVariables() {
     this.queryVariables = {
-      lastRunAt: moment().format('YYYY-MM-DD HH:mm:ss')
+      lastRunAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     };
   }
 
   getConfig() {
-    const _this = this;
-
-    return new Promise(function(resolve) {
+    return new Promise((resolve) => {
       const config = Object.create({});
       config.lineColor = 'green';
-      config.datasets = (_this.metricConfig.settings.datasets ? _this.metricConfig.settings.datasets : ['Count']);
+      config.datasets = (this.metricConfig.settings.datasets ? this.metricConfig.settings.datasets : ['Count']);
       resolve(config);
     });
   }
@@ -49,31 +47,29 @@ class MySQLMetric extends CustomMetric {
   }
 
   getData() {
-    const _this = this;
-
-    return new Promise(function(resolve, reject) {
-      _this.connectionsPool.getConnection(function(error, connection) {
+    return new Promise((resolve, reject) => {
+      this.connectionsPool.getConnection((error, connection) => {
         if (error) {
           reject(error.sqlMessage);
           return;
         }
-        connection.query(_this.query(_this.queryVariables), function(error, results, fields) {
+        connection.query(this.query(this.queryVariables), (error, results, fields) => {
           connection.release();
           if (error) {
             reject(error.sqlMessage);
             return;
           }
-          _this.updateQueryVariables();
-          const filteredResults = results.filter(function(result) {
-            return _this.filterRow(result);
+          this.updateQueryVariables();
+          const filteredResults = results.filter((result) => {
+            return this.filterRow(result);
           });
 
-          const title = _this.description;
-          const subTitle = _this.metricConfig.settings.database ? `${_this.metricConfig.settings.database}@${_this.metricConfig.settings.host}` : _this.metricConfig.settings.host;
+          const title = this.description;
+          const subTitle = this.metricConfig.settings.database ? `${this.metricConfig.settings.database}@${this.metricConfig.settings.host}` : this.metricConfig.settings.host;
           const points = [];
-          if (_this.metricConfig.settings.datasets) {
+          if (this.metricConfig.settings.datasets) {
             if (filteredResults.length > 0) {
-              _this.metricConfig.settings.datasets.map(function(dataset) {
+              this.metricConfig.settings.datasets.map((dataset) => {
                 points.push(filteredResults[0][dataset]);
               });
             }
@@ -83,19 +79,19 @@ class MySQLMetric extends CustomMetric {
           const values = [];
           values.push({
             raw: filteredResults.length,
-            formatted: filteredResults.length
+            formatted: filteredResults.length,
           });
           const table = {
             header: [],
             body: [],
           };
-          table.header = _this.fields ? _this.fields : fields.map(function(field) {
+          table.header = this.fields ? this.fields : fields.map((field) => {
             return field.name;
           });
           if (filteredResults.length > 0) {
             for (let i = 0; i < filteredResults.length; i++) {
               let row = [];
-              table.header.map(function(fieldName) {
+              table.header.map((fieldName) => {
                 row.push(filteredResults[i][fieldName]);
               });
               table.body.push(row);

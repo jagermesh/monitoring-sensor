@@ -7,7 +7,7 @@ class ProcessesMetric extends CustomMetric {
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 5000;
     metricConfig.settings = Object.assign({
-      processes: ''
+      processes: '',
     }, metricConfig.settings);
 
     super(sensorConfig, metricConfig);
@@ -15,7 +15,7 @@ class ProcessesMetric extends CustomMetric {
     this.processes = this.metricConfig.settings.processes;
     this.processesList = [];
     if (this.processes.length > 0) {
-      this.processesList = this.processes.split(',').map(function(processName) {
+      this.processesList = this.processes.split(',').map((processName) => {
         return processName.trim();
       });
     }
@@ -23,15 +23,13 @@ class ProcessesMetric extends CustomMetric {
   }
 
   getConfig() {
-    const _this = this;
-
-    return new Promise(function(resolve) {
+    return new Promise((resolve) => {
       const config = Object.create({});
       config.lineColor = 'green';
-      config.settings = _this.processes;
+      config.settings = this.processes;
       config.datasets = [];
       config.datasets.push('Total');
-      _this.processesList.map(function(processName) {
+      this.processesList.map((processName) => {
         config.datasets.push(processName);
       });
       resolve(config);
@@ -39,16 +37,14 @@ class ProcessesMetric extends CustomMetric {
   }
 
   getData() {
-    const _this = this;
-
-    return new Promise(function(resolve, reject) {
-      si.processes().then(function(processes) {
+    return new Promise((resolve, reject) => {
+      si.processes().then((processes) => {
         let processStat = {};
         let foundProcesses = [];
-        if (_this.processesList.length > 0) {
-          _this.processesList.map(function(processName) {
+        if (this.processesList.length > 0) {
+          this.processesList.map((processName) => {
             processStat[processName] = 0;
-            processes.list.map(function(processInfo) {
+            processes.list.map((processInfo) => {
               if (processInfo.name.indexOf(processName) !== -1) {
                 processStat[processName]++;
                 foundProcesses.push(processInfo);
@@ -58,10 +54,10 @@ class ProcessesMetric extends CustomMetric {
         } else {
           foundProcesses = processes.list;
         }
-        const title = `Process(es)`;
+        const title = 'Process(es)';
         let subTitle = `${foundProcesses.length} process(es) running`;
-        if (_this.processesList.length > 0) {
-          subTitle += ` [${_this.processes}]`;
+        if (this.processesList.length > 0) {
+          subTitle += ` [${this.processes}]`;
         }
         const points = [];
         points.push(foundProcesses.length);
@@ -69,19 +65,19 @@ class ProcessesMetric extends CustomMetric {
           points.push(processStat[processName]);
         }
         const table = {
-          header: _this.fields,
+          header: this.fields,
           body: [],
         };
-        foundProcesses.map(function(processInfo) {
+        foundProcesses.map((processInfo) => {
           let row = [];
-          _this.fields.map(function(fieldName) {
+          this.fields.map((fieldName) => {
             row.push(processInfo[fieldName]);
           });
           table.body.push(row);
         });
         const values = [];
         values.push({
-          raw: foundProcesses.length
+          raw: foundProcesses.length,
         });
         resolve({
           title: title,

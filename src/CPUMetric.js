@@ -8,7 +8,7 @@ class CPUMetric extends CustomMetric {
     metricConfig.rendererName = metricConfig.rendererName || 'Chart';
     metricConfig.refreshInterval = metricConfig.refreshInterval || 3000;
     metricConfig.settings = Object.assign({
-      processes: ''
+      processes: '',
     }, metricConfig.settings);
 
     super(sensorConfig, metricConfig);
@@ -16,7 +16,7 @@ class CPUMetric extends CustomMetric {
     this.processes = this.metricConfig.settings.processes;
     this.processesList = [];
     if (this.processes.length > 0) {
-      this.processesList = this.processes.split(',').map(function(processName) {
+      this.processesList = this.processes.split(',').map((processName) => {
         return processName.trim();
       });
     }
@@ -24,20 +24,18 @@ class CPUMetric extends CustomMetric {
   }
 
   getConfig() {
-    const _this = this;
-
-    return new Promise(function(resolve) {
+    return new Promise((resolve) => {
       const overload = 75;
       const critical = 90;
       const config = Object.create({});
       config.lineColor = 'green';
       config.suggestedMax = 100;
       config.min = 0;
-      config.settings = _this.processes;
+      config.settings = this.processes;
       config.datasets = [];
       config.datasets.push('Overall');
-      if (_this.processesList.length > 0) {
-        _this.processesList.map(function(processName) {
+      if (this.processesList.length > 0) {
+        this.processesList.map((processName) => {
           config.datasets.push(processName);
         });
       } else {
@@ -60,30 +58,28 @@ class CPUMetric extends CustomMetric {
   }
 
   getData() {
-    const _this = this;
-
-    return new Promise(function(resolve, reject) {
-      si.currentLoad().then(function(stats) {
+    return new Promise((resolve, reject) => {
+      si.currentLoad().then((stats) => {
         const currentLoad = stats.currentLoad;
         const currentLoadUser = stats.currentLoadUser;
         const currentLoadSystem = stats.currentLoadSystem;
         const currentLoadIdle = stats.currentLoadIdle;
-        const title = `CPU Load ${_this.cpus} CPUs`;
+        const title = `CPU Load ${this.cpus} CPUs`;
         const subTitle = `Overall ${currentLoad.toFixed(2)}%,  User ${currentLoadUser.toFixed(2)}%, System ${currentLoadSystem.toFixed(2)}%, Idle ${currentLoadIdle.toFixed(2)}%`;
         const points = [];
         points.push(currentLoad);
         const values = [];
         const table = {
           header: [],
-          body: []
+          body: [],
         };
-        if (_this.processesList.length > 0) {
+        if (this.processesList.length > 0) {
           table.header = ['Process', 'CPU', 'Memory'];
-          si.services(_this.processes).then(function(stats) {
+          si.services(this.processes).then((stats) => {
             let max = 0;
             let avg = 0;
             let sum = 0;
-            stats.map(function(stat) {
+            stats.map((stat) => {
               table.body.push([stat.name, `${stat.cpu.toFixed(2)}%`, `${stat.mem.toFixed(2)}%`]);
               points.push(stat.cpu);
               if (stat.cpu > max) {
@@ -98,12 +94,12 @@ class CPUMetric extends CustomMetric {
               raw: avg,
               threshold: avg,
               formatted: `${avg.toFixed(2)}%`,
-              label: 'Avg'
+              label: 'Avg',
             });
             values.push({
               raw: max,
               formatted: `${max.toFixed(2)}%`,
-              label: 'Max'
+              label: 'Max',
             });
             resolve({
               title: title,
@@ -123,7 +119,7 @@ class CPUMetric extends CustomMetric {
           values.push({
             raw: currentLoad,
             threshold: currentLoad,
-            formatted: `${currentLoad.toFixed(2)}%`
+            formatted: `${currentLoad.toFixed(2)}%`,
           });
           resolve({
             title: title,

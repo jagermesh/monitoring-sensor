@@ -14,18 +14,16 @@ class RAMMetric extends CustomMetric {
   }
 
   getConfig() {
-    const _this = this;
-
-    return new Promise(function(resolve, reject) {
-      si.mem().then(function(stats) {
+    return new Promise((resolve, reject) => {
+      si.mem().then((stats) => {
         let tmp = stats.total;
-        _this.multiplier = 1;
+        this.multiplier = 1;
         while (tmp > 1024) {
           tmp = tmp / 1024;
-          _this.multiplier = _this.multiplier * 1024;
+          this.multiplier = this.multiplier * 1024;
         }
         let rawTotal = stats.total;
-        let total = rawTotal / _this.multiplier;
+        let total = rawTotal / this.multiplier;
         const overload = total * 0.75;
         const critical = total * 0.90;
         const config = Object.create({});
@@ -51,15 +49,13 @@ class RAMMetric extends CustomMetric {
   }
 
   getData() {
-    const _this = this;
-
-    return new Promise(function(resolve, reject) {
-      si.mem().then(function(stats) {
+    return new Promise((resolve, reject) => {
+      si.mem().then((stats) => {
         const rawTotal = stats.total;
         const rawActive = stats.active;
         const rawAvailable = stats.available;
-        const active = rawActive / _this.multiplier;
-        const title = `RAM`;
+        const active = rawActive / this.multiplier;
+        const title = 'RAM';
         const subTitle = `Available ${bytes(rawAvailable)}, Active ${bytes(rawActive)}, Total ${bytes(rawTotal)}`;
         const table = {
           header: [],
@@ -74,18 +70,18 @@ class RAMMetric extends CustomMetric {
         values.push({
           raw: rawAvailable,
           formatted: bytes(rawAvailable),
-          label: 'Available'
+          label: 'Available',
         });
         values.push({
           raw: rawActive,
           threshold: active,
           formatted: bytes(rawActive),
-          label: 'Active'
+          label: 'Active',
         });
         values.push({
           raw: rawTotal,
           formatted: bytes(rawTotal),
-          label: 'Total'
+          label: 'Total',
         });
         resolve({
           title: title,
