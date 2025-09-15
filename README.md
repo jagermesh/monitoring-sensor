@@ -11,9 +11,10 @@ npm install --save monitoring-sensor
 
 ## Metric data structure
 
-{ title:    title
-, subTitle: subTitle
-, points:   points
-, values:   values
-, table:    table
+{
+  title: title,
+  subTitle: subTitle,
+  points: points,
+  values: values,
+  table: table
 }
