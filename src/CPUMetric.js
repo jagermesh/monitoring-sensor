@@ -35,7 +35,7 @@ class CPUMetric extends CustomMetric {
       config.datasets = [];
       config.datasets.push('Overall');
       if (this.processesList.length > 0) {
-        this.processesList.map((processName) => {
+        this.processesList.forEach((processName) => {
           config.datasets.push(processName);
         });
       } else {
@@ -79,7 +79,7 @@ class CPUMetric extends CustomMetric {
             let max = 0;
             let avg = 0;
             let sum = 0;
-            stats.map((stat) => {
+            stats.forEach((stat) => {
               table.body.push([stat.name, `${stat.cpu.toFixed(2)}%`, `${stat.mem.toFixed(2)}%`]);
               points.push(stat.cpu);
               if (stat.cpu > max) {

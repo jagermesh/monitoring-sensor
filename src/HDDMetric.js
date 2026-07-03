@@ -52,7 +52,7 @@ class HDDMetric extends CustomMetric {
               )
             );
           });
-          devices.map((device) => {
+          devices.forEach((device) => {
             config.datasets.push(device.mount);
           });
           if (this.threshold) {
@@ -83,7 +83,7 @@ class HDDMetric extends CustomMetric {
         });
         let totalUsed = 0;
         let totalSize = 0;
-        devices.map((device) => {
+        devices.forEach((device) => {
           totalUsed += device.used;
           totalSize += device.size;
         });
@@ -93,7 +93,7 @@ class HDDMetric extends CustomMetric {
           header: ['mount', 'size', 'used', 'use', 'type', 'fs'],
           body: [],
         };
-        devices.map((device) => {
+        devices.forEach((device) => {
           points.push(device.use);
           table.body.push([
             device.mount,

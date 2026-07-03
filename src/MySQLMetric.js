@@ -2,7 +2,7 @@ const mysql = require('mysql');
 const Handlebars = require('handlebars');
 const moment = require('moment');
 
-const CustomMetric = require(__dirname + '/CustomMetric.js');
+const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 
 class MySQLMetric extends CustomMetric {
   constructor(sensorConfig, metricConfig) {
@@ -69,7 +69,7 @@ class MySQLMetric extends CustomMetric {
           const points = [];
           if (this.metricConfig.settings.datasets) {
             if (filteredResults.length > 0) {
-              this.metricConfig.settings.datasets.map((dataset) => {
+              this.metricConfig.settings.datasets.forEach((dataset) => {
                 points.push(filteredResults[0][dataset]);
               });
             }
@@ -91,7 +91,7 @@ class MySQLMetric extends CustomMetric {
           if (filteredResults.length > 0) {
             for (let i = 0; i < filteredResults.length; i++) {
               let row = [];
-              table.header.map((fieldName) => {
+              table.header.forEach((fieldName) => {
                 row.push(filteredResults[i][fieldName]);
               });
               table.body.push(row);

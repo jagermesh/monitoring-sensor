@@ -1,6 +1,6 @@
 const os = require('os');
 
-const CustomMetric = require(__dirname + '/CustomMetric.js');
+const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 
 class LAMetric extends CustomMetric {
   constructor(sensorConfig, metricConfig) {

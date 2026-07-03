@@ -1,7 +1,7 @@
 const bytes = require('bytes');
 const si = require('systeminformation');
 
-const CustomMetric = require(__dirname + '/CustomMetric.js');
+const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 
 class RAMMetric extends CustomMetric {
   constructor(sensorConfig, metricConfig) {
@@ -19,8 +19,8 @@ class RAMMetric extends CustomMetric {
         let tmp = stats.total;
         this.multiplier = 1;
         while (tmp > 1024) {
-          tmp = tmp / 1024;
-          this.multiplier = this.multiplier * 1024;
+          tmp /= 1024;
+          this.multiplier *= 1024;
         }
         let rawTotal = stats.total;
         let total = rawTotal / this.multiplier;

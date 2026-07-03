@@ -1,4 +1,4 @@
-const MySQLMetric = require(__dirname + '/MySQLMetric.js');
+const MySQLMetric = require(`${__dirname}/MySQLMetric.js`);
 
 class MySQLProcessesMetric extends MySQLMetric {
   constructor(sensorConfig, metricConfig) {

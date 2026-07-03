@@ -1,8 +1,8 @@
 const uuid = require('uuid');
 const os = require('os');
 
-const SensorHubConnector = require(__dirname + '/SensorHubConnector.js');
-const Logger = require(__dirname + '/Logger.js');
+const SensorHubConnector = require(`${__dirname}/SensorHubConnector.js`);
+const Logger = require(`${__dirname}/Logger.js`);
 
 class MonitoringSensor {
   constructor(config, logger) {
@@ -76,13 +76,13 @@ class MonitoringSensor {
 
     this.sensorHubConnector.on('connect', () => {
       this.logger.log(`Connected to hub at ${this.sensorConfig.hubUrl}`);
-      this.metrics.map((metric) => {
+      this.metrics.forEach((metric) => {
         this.registerMetric(metric.metricDescriptor);
       });
     });
 
     this.sensorHubConnector.on('metricRegistered', (data) => {
-      this.metrics.map((metric) => {
+      this.metrics.forEach((metric) => {
         if (metric.metricDescriptor.metricInfo.metricUid === data.metricInfo.metricUid) {
           this.logger.log('Metric registration acknowledged', metric.metricDescriptor);
           this.gatherAndSendData(metric.metric, metric.metricDescriptor);

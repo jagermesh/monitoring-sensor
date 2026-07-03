@@ -1,7 +1,7 @@
 const moment = require('moment');
 const axios = require('axios');
 
-const CustomMetric = require(__dirname + '/CustomMetric.js');
+const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 
 class JenkinsMetric extends CustomMetric {
   constructor(sensorConfig, metricConfig) {
@@ -26,7 +26,7 @@ class JenkinsMetric extends CustomMetric {
   }
 
   formatDate(d) {
-    let result = '';
+    let result;
     let m = moment(d);
     if (m.isSame(new Date(), 'day')) {
       result = m.format('LT');
@@ -60,7 +60,7 @@ class JenkinsMetric extends CustomMetric {
           password: this.metricConfig.settings.password,
         };
       }
-      axios.get(this.apiUrl + 'api/json', params).then(async (response) => {
+      axios.get(`${this.apiUrl}api/json`, params).then(async (response) => {
         let builds = response.data.builds;
         let allBuilds = [];
         let missingBuilds = [];
@@ -138,7 +138,7 @@ class JenkinsMetric extends CustomMetric {
           'Console output',
           'Status page',
         ];
-        allBuilds.map((build) => {
+        allBuilds.forEach((build) => {
           let duration = build.duration / 1000 / 60;
           table.body.push([
             build.number,

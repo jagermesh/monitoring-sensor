@@ -1,6 +1,6 @@
 const si = require('systeminformation');
 
-const CustomMetric = require(__dirname + '/CustomMetric.js');
+const CustomMetric = require(`${__dirname}/CustomMetric.js`);
 
 class ProcessesMetric extends CustomMetric {
   constructor(sensorConfig, metricConfig) {
@@ -29,7 +29,7 @@ class ProcessesMetric extends CustomMetric {
       config.settings = this.processes;
       config.datasets = [];
       config.datasets.push('Total');
-      this.processesList.map((processName) => {
+      this.processesList.forEach((processName) => {
         config.datasets.push(processName);
       });
       resolve(config);
@@ -42,9 +42,9 @@ class ProcessesMetric extends CustomMetric {
         let processStat = {};
         let foundProcesses = [];
         if (this.processesList.length > 0) {
-          this.processesList.map((processName) => {
+          this.processesList.forEach((processName) => {
             processStat[processName] = 0;
-            processes.list.map((processInfo) => {
+            processes.list.forEach((processInfo) => {
               if (processInfo.name.indexOf(processName) !== -1) {
                 processStat[processName]++;
                 foundProcesses.push(processInfo);
@@ -68,9 +68,9 @@ class ProcessesMetric extends CustomMetric {
           header: this.fields,
           body: [],
         };
-        foundProcesses.map((processInfo) => {
+        foundProcesses.forEach((processInfo) => {
           let row = [];
-          this.fields.map((fieldName) => {
+          this.fields.forEach((fieldName) => {
             row.push(processInfo[fieldName]);
           });
           table.body.push(row);
